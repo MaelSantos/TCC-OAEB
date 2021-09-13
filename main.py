@@ -2,7 +2,8 @@ from bs4 import BeautifulSoup
 
 import requests
 
-html = requests.get("https://www.climatempo.com.br/").content
+url = "https://triunfo.pe.gov.br/transparencia/folha-pagamentos/servidoresAtivos?ug-codigo=1&ano=2021"
+html = requests.get(url).content
 
 soup = BeautifulSoup(html, 'html.parser')
 
@@ -13,7 +14,7 @@ soup = BeautifulSoup(html, 'html.parser')
 # temperatura = soup.find("span", class_="shimmer-placeholder -text -bold -gray-dark-2 -font-55 _margin-l-15")
 # temperatura = soup.find("a", class_="actTriggerGA")
 # temperatura = soup.findAll("li", class_="item")
-temperatura = soup.find("span", id="current-weather-temperature")
+temperatura = soup.find("table", id="table")
 # temperatura = soup.find("a", style="font-style:italic;")
 
 print(temperatura)
