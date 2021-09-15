@@ -1,25 +1,26 @@
 from bs4 import BeautifulSoup
-
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
 import requests
 
-url = "https://triunfo.pe.gov.br/transparencia/folha-pagamentos/servidoresAtivos?ug-codigo=1&ano=2021"
-html = requests.get(url).content
+urlTriunfo = "https://triunfo.pe.gov.br"
+urlCalumbi = "https://calumbi.pe.gov.br"
+
+servidor = "servidor=joao"
+
+url = urlCalumbi+"/transparencia/folha-pagamentos/servidoresAtivos?ano=2021&"+servidor
+# html = requests.get(urlCalumbi).content
+
+chrome_options = Options()
+## faz com que o browser não abra durante o processo
+chrome_options.add_argument("--headless")
+## caminho para o seu webdriver
+p = ""
+driver = webdriver.Chrome(p +'chromedriver.exe', options=chrome_options)
+driver.get(url)
+html = driver.page_source
 
 soup = BeautifulSoup(html, 'html.parser')
+tabela = soup.find("table", id="table")
 
-# print(soup.prettify())
-# print(soup.span);
-
-# temperatura = soup.find("div", class_="_flex _justify-center _align-center")
-# temperatura = soup.find("span", class_="shimmer-placeholder -text -bold -gray-dark-2 -font-55 _margin-l-15")
-# temperatura = soup.find("a", class_="actTriggerGA")
-# temperatura = soup.findAll("li", class_="item")
-temperatura = soup.find("table", id="table")
-# temperatura = soup.find("a", style="font-style:italic;")
-
-print(temperatura)
-
-# soup = BeautifulSoup('<META NAME="City" content="Austin">', 'html.parser')
-# soup.find("meta", {"name":"City"})
-#
-# print(soup.find("meta", {"name":"City"})['content'])
+print(tabela)
