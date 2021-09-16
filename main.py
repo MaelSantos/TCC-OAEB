@@ -3,12 +3,21 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 import requests
 
-urlTriunfo = "https://triunfo.pe.gov.br"
-urlCalumbi = "https://calumbi.pe.gov.br"
+urlTriunfo = "https://triunfo.pe.gov.br/transparencia/"
+urlCalumbi = "https://calumbi.pe.gov.br/transparencia/"
+urlFloresta = "https://floresta.pe.gov.br/transparencia/"
+urlMirandiba = "https://mirandiba.pe.gov.br/portal-transparencia/"
+urlSantaCruz = "https://www.santacruzdabaixaverde.pe.gov.br/transparencia/"
+urlBetania = "https://betania.pe.gov.br/folha-de-pagamento/";
 
-servidor = "servidor=joao"
+urlSerra = "http://transparencia.serratalhada.pe.gov.br/folhas-pagamentos-servidores/ativos?ano=2021"
 
-url = urlCalumbi+"/transparencia/folha-pagamentos/servidoresAtivos?ano=2021&"+servidor
+servidor = "&servidor=joao"
+mes = "&mes=3"
+
+url = urlBetania+"folha-pagamentos/servidoresAtivos?ano=2021"+servidor+mes
+# url = urlSerra+servidor
+print(url)
 # html = requests.get(urlCalumbi).content
 
 chrome_options = Options()
