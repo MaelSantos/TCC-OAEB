@@ -15,7 +15,7 @@ urlSerra = "http://transparencia.serratalhada.pe.gov.br/folhas-pagamentos-servid
 servidor = "&servidor=joao"
 mes = "&mes=3"
 
-url = urlBetania+"folha-pagamentos/servidoresAtivos?ano=2021"+servidor+mes
+url = urlSantaCruz+"folha-pagamentos/servidoresAtivos?ano=2021"+servidor+mes
 # url = urlSerra+servidor
 print(url)
 # html = requests.get(urlCalumbi).content
