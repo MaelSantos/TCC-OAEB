@@ -1,6 +1,5 @@
 from django.db import models
 
-
 class Endereco(models.Model):
     municipio = models.CharField(max_length=200)
     codigo_municipio = models.CharField(max_length=200)
