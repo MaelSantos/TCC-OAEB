@@ -1,0 +1,23 @@
+{% extends "polls/menu.html" %}
+
+{% block titulo %}Web Crawling{% endblock %}
+
+{% block cruzamento %}active{% endblock %}
+
+{% block content %}
+
+    <form method="POST" class="form-signin" action="/polls/cruzamento/beneficiarios/">
+        {% csrf_token %}
+        <div class="form-group mb-3">
+            <label for="nomeBeneficiario">Nome do Beneficíario:</label>
+            <input type="text" class="form-control" id="nomeBeneficiario" name="nomeBeneficiario" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Buscar<i class="ui search icon"></i></button>
+    </form>
+
+    {% if data != None %}
+        <h1>{{ data }}</h1>
+    {% endif %}
+
+
+{% endblock %}
