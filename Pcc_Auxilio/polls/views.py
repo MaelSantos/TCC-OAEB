@@ -9,6 +9,8 @@ from django.http import HttpResponse
 def index(request):
     return render(request, 'polls/principal.html')
 
+def cruzamento(request):
+    return render(request, 'polls/cruzamento_beneficiario.html')
 
 class BeneficiarioListView(ListView):
     model = Beneficiario

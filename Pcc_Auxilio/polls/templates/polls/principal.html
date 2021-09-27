@@ -1,13 +1,16 @@
-@extends('templates.menu', ['inicio' => 'active'])
 
-@section('titulo', 'Inicio')
+{% extends "polls/menu.html" %}
 
-@section('content')
+{% block titulo %}Inicio{% endblock %}
+
+{% block inicio %}active{% endblock %}
+
+{% block content %}
 
     <div class="ui middle aligned center aligned grid">
         <div class="column">
-
+            zfsdfsdfs
         </div>
     </div>
 
-@endsection('content')
+{% endblock %}

@@ -1,11 +1,12 @@
-@extends('templates.menu', ['cruzamento' => 'active'])
+{% extends "polls/menu.html" %}
 
-@section('titulo', 'Web Crawling')
+{% block titulo %}Web Crawling{% endblock %}
 
-@section('content')
+{% block cruzamento %}active{% endblock %}
 
-    <form method="POST" class="form-signin" action="{{ route('buscar.cruzamento') }}">
-        @csrf
+{% block content %}
+
+    <form method="POST" class="form-signin" action="">
         <div class="form-group mb-3">
             <label for="nomeBeneficiario">Nome do Beneficíario:</label>
             <input type="text" class="form-control" id="nomeBeneficiario" name="nomeBeneficiario" required>
@@ -14,8 +15,8 @@
     </form>
 
     @isset($data)
-        <h1>{{ $data }}</h1>
+        <h1>data</h1>
     @endisset
 
 
-@endsection("content")
+{% endblock %}
