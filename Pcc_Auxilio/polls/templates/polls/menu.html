@@ -34,19 +34,19 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav">
-                @if (isset($menu))
+                {% if menu != None %}
                     <li class="nav-item">
                         <a href="" class="nav-link {% block login %}{% endblock %}">Login</a>
                     </li>
                     <li class="nav-item">
                         <a href="" class="nav-link {% block cadastro %}{% endblock %}">Cadastro</a>
                     </li>
-                @else
+                {% else %}
                     <li class="nav-item">
                         <a href="" class="nav-link {% block inicio %}{% endblock %}">Inicio</a>
                     </li>
                     <li class="nav-item">
-                        <a href="cruzamento/" class="nav-link {% block cruzamento %}{% endblock %}">Buscar
+                        <a href="/polls/cruzamento/" class="nav-link {% block cruzamento %}{% endblock %}">Buscar
                             Benefíciarios</a>
                     </li>
 
@@ -61,7 +61,7 @@
                         </ul>
                     </li>
 
-                @endif
+                {% endif %}
             </ul>
         </div>
         <ul class="navbar-nav">
@@ -91,9 +91,9 @@
         </div>
     </div>
 
-    @yield('optional')
+    {% block optional %}{% endblock %}
 
-    @include('templates.footer')
+    {% include 'polls/footer.html' %}
 </body>
 
 </html>
