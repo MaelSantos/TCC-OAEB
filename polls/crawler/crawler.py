@@ -19,19 +19,21 @@ class Crawler:
     ]
 
     def crawler_prefeitura(self, cidade, servidor, mes='4', ano='2021'):
-        if cidade != "Serra":
-            url = self.urls[cidade] + "folha-pagamentos/servidoresAtivos?ano=" + ano + "&servidor=" + servidor + "&mes=" + mes
-        else:
-            url = self.urls[cidade] + "?ano=" + ano + "&servidor=" + servidor + "&mes=" + mes
-        print(url)
 
-        chrome_options = Options()
-        chrome_options.add_argument("--headless")  ## faz com que o browser não abra durante o processo
-
-        driver = webdriver.Chrome('../../chromedriver.exe', options=chrome_options)  ## caminho para o seu webdriver
-        driver.get(url)  ## carrega a página (htlm, js, etc.)
-        html = driver.page_source
-
-        soup = BeautifulSoup(html, 'html.parser')
-        tabela = soup.find("table", id="table")  ## busca tabela com dados
-        return tabela
+        return self.urls
+        # if cidade != "Serra":
+        #     url = self.urls[cidade] + "folha-pagamentos/servidoresAtivos?ano=" + ano + "&servidor=" + servidor + "&mes=" + mes
+        # else:
+        #     url = self.urls[cidade] + "?ano=" + ano + "&servidor=" + servidor + "&mes=" + mes
+        # print(url)
+        #
+        # chrome_options = Options()
+        # chrome_options.add_argument("--headless")  ## faz com que o browser não abra durante o processo
+        #
+        # driver = webdriver.Chrome('../../chromedriver.exe', options=chrome_options)  ## caminho para o seu webdriver
+        # driver.get(url)  ## carrega a página (htlm, js, etc.)
+        # html = driver.page_source
+        #
+        # soup = BeautifulSoup(html, 'html.parser')
+        # tabela = soup.find("table", id="table")  ## busca tabela com dados
+        # return tabela
