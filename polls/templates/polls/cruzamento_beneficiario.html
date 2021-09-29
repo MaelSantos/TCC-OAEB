@@ -10,14 +10,17 @@
         {% csrf_token %}
         <div class="form-group mb-3">
             <label for="nomeBeneficiario">Nome do Beneficíario:</label>
-            <input type="text" class="form-control" id="nomeBeneficiario" name="nomeBeneficiario" required>
+            <input type="text" class="form-control" id="nomeBeneficiario" name="nomeBeneficiario" value="{{ nome }}" required>
         </div>
         <button type="submit" class="btn btn-primary">Buscar<i class="ui search icon"></i></button>
     </form>
 
     {% if data != None %}
-        <h1>{{ data }}</h1>
+        <table>
+            {{ data }}
+        </table>
     {% endif %}
+
 
 
 {% endblock %}

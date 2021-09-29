@@ -9,6 +9,7 @@ from django.http import HttpResponse
 
 crawler = Crawler()
 
+
 def index(request):
     return render(request, 'polls/principal.html')
 
@@ -21,10 +22,10 @@ def cruzar(request):
     if request.method == "POST":
         nome = request.POST.get('nomeBeneficiario')
 
-        html = crawler.crawler_prefeitura('SantaCruz', nome);
+        html = crawler.crawler_prefeitura('SantaCruz', nome)
         print(html)
 
-        return render(request, 'polls/cruzamento_beneficiario.html', {'data': html['Triunfo']})
+        return render(request, 'polls/cruzamento_beneficiario.html', {'data': html, "nome": nome})
     else:
         return redirect('cruzamento')
 
