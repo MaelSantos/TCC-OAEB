@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.views.generic import DetailView, ListView
-from .models import Beneficiario
+from .models import BeneficiarioAuxilio
 from .crawler.crawler import Crawler
 from django import template
 
@@ -22,7 +22,8 @@ def cruzar(request):
     if request.method == "POST":
         nome = request.POST.get('nomeBeneficiario')
 
-        html = crawler.crawler_prefeitura('SantaCruz', nome)
+        # html = crawler.crawler_prefeitura('SantaCruz', nome)
+        html = crawler.crawler_bolsafamilia()
         print(html)
 
         return render(request, 'polls/cruzamento_beneficiario.html', {'data': html, "nome": nome})
@@ -31,8 +32,8 @@ def cruzar(request):
 
 
 class BeneficiarioListView(ListView):
-    model = Beneficiario
+    model = BeneficiarioAuxilio
 
 
 class BeneficiarioDetailView(DetailView):
-    model = Beneficiario
+    model = BeneficiarioAuxilio
