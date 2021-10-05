@@ -15,9 +15,11 @@
         <button type="submit" class="btn btn-primary">Buscar<i class="ui search icon"></i></button>
     </form>
 
-    {% if data != None %}
+    {% if data != None and data != "" %}
         <table>
-            {{ data }}
+            {% for b in data %}
+                {{ b }}
+            {% endfor %}
         </table>
     {% endif %}
 

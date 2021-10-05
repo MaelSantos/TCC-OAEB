@@ -7,7 +7,7 @@
     <form method="POST" class="ui large form" action="{{ route('busca.beneficiarios') }}">
         @csrf
         <div class="form-group mb-3">
-            <label for=" nomeBeneficiario">Nome do Beneficíario:</label>
+            <label for="nomeBeneficiario">Nome do Beneficíario:</label>
             <input type="text" class="form-control" id="nomeBeneficiario" name="nomeBeneficiario"
                 value="{{ @$nome }}" required>
         </div>

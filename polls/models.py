@@ -1,51 +1,133 @@
-from django.db import models
+# from django.db import models
+#
+#
+# class Endereco(models.Model):
+#     municipio = models.CharField(max_length=200, unique=True, null=True)
+#     codigo_municipio = models.IntegerField(unique=True, null=True)
+#     codigo_siafi = models.IntegerField(unique=True, null=True)
+#     uf = models.CharField(max_length=2)  # UF
+#
+#     def __str__(self):
+#         return self.municipio
+#
+#
+# class BeneficiarioAuxilio(models.Model):
+#     nome_beneficiario = models.CharField(max_length=100)
+#     cpf_beneficiario = models.CharField(max_length=14)
+#     nis = models.CharField(max_length=20, null=True)
+#     responsavel = models.CharField(max_length=100, null=True)
+#     cpf_responsavel = models.CharField(max_length=14, null=True)
+#     nis_responsavel = models.CharField(max_length=100, null=True)
+#     enquadramento = models.CharField(max_length=100)
+#     endereco = models.ForeignKey(Endereco, on_delete=models.CASCADE)
+#
+#     def __str__(self):
+#         return self.nome_beneficiario
+#
+#
+# class Beneficio(models.Model):
+#     parcela = models.CharField(max_length=4)
+#     mes = models.CharField(max_length=200)
+#     valor = models.DecimalField(max_digits=8, decimal_places=2)
+#     observacao = models.CharField(max_length=200, null=True)
+#     beneficiario = models.ForeignKey(BeneficiarioAuxilio, on_delete=models.CASCADE)
+#
+#     def __str__(self):
+#         return self.mes
+#
+#
+# class BeneficiarioBolsaFamilia(models.Model):
+#     mes_referencia = models.CharField(max_length=6)  # MÊS REFERÊNCIA
+#     mes_competencia = models.CharField(max_length=6)  # MÊS COMPETÊNCIA
+#     cpf = models.CharField(max_length=14, null=True)  # CPF FAVORECIDO
+#     nis = models.CharField(max_length=20)  # NIS FAVORECIDO
+#     nome_favorecido = models.CharField(max_length=100)  # NOME FAVORECIDO
+#     valor = models.DecimalField(max_digits=8, decimal_places=2)  # VALOR PARCELA
+#     # codigo_municipio = models.IntegerField() #CÓDIGO MUNICÍPIO SIAFI
+#     # nome_municipio = models.CharField(max_length=100) #NOME MUNICÍPIO
+#     endereco = models.ForeignKey(Endereco, on_delete=models.CASCADE)
+#
+#     def __str__(self):
+#         return self.nome_favorecido
+
+from sqlalchemy import create_engine, Column, Integer, String, Numeric, ForeignKey
+from sqlalchemy.orm import sessionmaker, relationship
+from sqlalchemy.ext.declarative import declarative_base
+
+# url = "mysql://{username}:{password}@{server}/teste?charset=utf8".format('root', '', 'localhost')
+engine = create_engine('mysql+pymysql://root:@localhost/teste?charset=utf8', echo=True)
+
+Session = sessionmaker(bind=engine)
+session = Session()
+
+Base = declarative_base()
 
 
-class Endereco(models.Model):
-    municipio = models.CharField(max_length=200, unique=True, null=True)
-    codigo_municipio = models.IntegerField(unique=True, null=True)
-    codigo_siafi = models.IntegerField(unique=True, null=True)
-    uf = models.CharField(max_length=2)  # UF
+class Endereco(Base):
+    __tablename__ = 'endereco'
+
+    id = Column(Integer, primary_key=True)
+    municipio = Column(String(200), unique=True, nullable=True)
+    codigo_municipio = Column(Integer, unique=True, nullable=True)
+    codigo_siafi = Column(Integer, unique=True, nullable=True)
+    uf = Column(String(2))  # UF
+
+    # bf_auxilio = relationship(BeneficiarioAuxilio, backref="users")
+    # bf_bolsa = relationship(BeneficiarioBolsaFamilia, backref="users")
 
     def __str__(self):
         return self.municipio
 
 
-class BeneficiarioAuxilio(models.Model):
-    nome_beneficiario = models.CharField(max_length=100)
-    cpf_beneficiario = models.CharField(max_length=14)
-    nis = models.CharField(max_length=20, null=True)
-    responsavel = models.CharField(max_length=100, null=True)
-    cpf_responsavel = models.CharField(max_length=14, null=True)
-    nis_responsavel = models.CharField(max_length=100, null=True)
-    enquadramento = models.CharField(max_length=100)
-    endereco = models.ForeignKey(Endereco, on_delete=models.CASCADE)
+class BeneficiarioAuxilio(Base):
+    __tablename__ = 'beneficiario_auxilio'
+
+    id = Column(Integer, primary_key=True)
+    nome_beneficiario = Column(String(100))
+    cpf_beneficiario = Column(String(14))
+    nis = Column(String(20), nullable=True)
+    responsavel = Column(String(100), nullable=True)
+    cpf_responsavel = Column(String(14), nullable=True)
+    nis_responsavel = Column(String(100), nullable=True)
+    enquadramento = Column(String(100))
+    endereco_id = Column(Integer, ForeignKey('endereco.id'))
+    endereco = relationship('Endereco')
 
     def __str__(self):
         return self.nome_beneficiario
 
 
-class Beneficio(models.Model):
-    parcela = models.CharField(max_length=4)
-    mes = models.CharField(max_length=200)
-    valor = models.DecimalField(max_digits=8, decimal_places=2)
-    observacao = models.CharField(max_length=200, null=True)
-    beneficiario = models.ForeignKey(BeneficiarioAuxilio, on_delete=models.CASCADE)
+class Beneficio(Base):
+    __tablename__ = 'beneficio'
+
+    id = Column(Integer, primary_key=True)
+    parcela = Column(String(4))
+    mes = Column(String(200))
+    valor = Column(Numeric(8, 2))
+    observacao = Column(String(200), nullable=True)
+
+    beneficiario_id = Column(Integer, ForeignKey('beneficiario_auxilio.id'))
+    beneficiario = relationship('BeneficiarioAuxilio')
 
     def __str__(self):
         return self.mes
 
 
-class BeneficiarioBolsaFamilia(models.Model):
-    mes_referencia = models.CharField(max_length=6)  # MÊS REFERÊNCIA
-    mes_competencia = models.CharField(max_length=6)  # MÊS COMPETÊNCIA
-    cpf = models.CharField(max_length=14, null=True)  # CPF FAVORECIDO
-    nis = models.CharField(max_length=20)  # NIS FAVORECIDO
-    nome_favorecido = models.CharField(max_length=100)  # NOME FAVORECIDO
-    valor = models.DecimalField(max_digits=8, decimal_places=2)  # VALOR PARCELA
-    # codigo_municipio = models.IntegerField() #CÓDIGO MUNICÍPIO SIAFI
-    # nome_municipio = models.CharField(max_length=100) #NOME MUNICÍPIO
-    endereco = models.ForeignKey(Endereco, on_delete=models.CASCADE)
+class BeneficiarioBolsaFamilia(Base):
+    __tablename__ = 'beneficiario_bolsa_familia'
+
+    id = Column(Integer, primary_key=True)
+    mes_referencia = Column(String(6))  # MÊS REFERÊNCIA
+    mes_competencia = Column(String(6))  # MÊS COMPETÊNCIA
+    cpf = Column(String(14), nullable=True)  # CPF FAVORECIDO
+    nis = Column(String(20))  # NIS FAVORECIDO
+    nome_favorecido = Column(String(100))  # NOME FAVORECIDO
+    valor = Column(Numeric(8, 2))  # VALOR PARCELA
+    endereco_id = Column(Integer, ForeignKey('endereco.id'))
+    endereco = relationship('Endereco')
 
     def __str__(self):
         return self.nome_favorecido
+
+
+Base.metadata.create_all(engine)
