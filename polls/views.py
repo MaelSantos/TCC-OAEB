@@ -3,7 +3,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 from .crawler.crawler import Crawler
-from  .models import BeneficiarioAuxilio, BeneficiarioBolsaFamilia
+from .models import BeneficiarioAuxilio, BeneficiarioBolsaFamilia
 
 crawler = Crawler()
 
@@ -41,19 +41,33 @@ def cruzar_bolsa_famila(request):
     if request.method == "POST":
         nome = request.POST.get('nomeBeneficiario')
         nis = request.POST.get('nis')
-        cpf = request.POST.get('cpf')
+        tipoBusca = request.POST.get('tipoBusca')
+        # cpf = request.POST.get('cpf')
 
-        # auxilio = BeneficiarioAuxilio.objects.filter(nome_beneficiario__icontains=nome)
-        # bolsa = BeneficiarioBolsaFamilia.objects.filter(nome_favorecido__icontains=nome)
+        if tipoBusca == "d":
+            devido = "selected"
+            indevido = ""
 
-        # data = list(chain(auxilio, bolsa))
-        # data = auxilio & bolsa
+            data = session.query(BeneficiarioAuxilio).filter(
+                BeneficiarioAuxilio.nome_beneficiario.like("%" + nome + "%")) \
+                .filter(BeneficiarioBolsaFamilia.nome_favorecido.like("%" + nome + "%")) \
+                .filter(BeneficiarioAuxilio.nis.like("%" + nis + "%")) \
+                .filter(BeneficiarioBolsaFamilia.nis.like("%" + nis + "%")) \
+                .filter(BeneficiarioBolsaFamilia.nis == BeneficiarioAuxilio.nis)
+        else:
+            devido = ""
+            indevido = "selected"
 
-        # data = BeneficiarioAuxilio.objects.filter(nome_beneficiario__icontains=BeneficiarioBolsaFamilia.objects.filter(nome_favorecido__icontains=nome).values("nome_favorecido"))
+            data = session.query(BeneficiarioAuxilio).filter(
+                BeneficiarioAuxilio.nome_beneficiario.like("%" + nome + "%")) \
+                .filter(BeneficiarioAuxilio.nis.like("%" + nis + "%")) \
+                .filter(BeneficiarioAuxilio.nis.not_in(session.query(BeneficiarioBolsaFamilia.nis).filter(
+                    BeneficiarioBolsaFamilia.nome_favorecido.like("%" + nome + "%")).filter(
+                    BeneficiarioBolsaFamilia.nis.like("%" + nis + "%"))))
 
-        data = session.query(BeneficiarioAuxilio)
         print(data)
 
-        return render(request, 'polls/bolsa_familia.html', {'data': data, "nome": nome, "nis": nis, "cpf": cpf})
+        return render(request, 'polls/bolsa_familia.html',
+                      {'data': data, "nome": nome, "nis": nis, "devido": devido, "indevido": indevido})
     else:
         return redirect('cruzar_bolsa_familia')
