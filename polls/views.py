@@ -58,12 +58,12 @@ def cruzar_bolsa_famila(request):
             devido = ""
             indevido = "selected"
 
-            data = session.query(BeneficiarioAuxilio).filter(
-                BeneficiarioAuxilio.nome_beneficiario.like("%" + nome + "%")) \
-                .filter(BeneficiarioAuxilio.nis.like("%" + nis + "%")) \
-                .filter(BeneficiarioAuxilio.nis.not_in(session.query(BeneficiarioBolsaFamilia.nis).filter(
-                    BeneficiarioBolsaFamilia.nome_favorecido.like("%" + nome + "%")).filter(
-                    BeneficiarioBolsaFamilia.nis.like("%" + nis + "%"))))
+            data = session.query(BeneficiarioBolsaFamilia).filter(
+                BeneficiarioBolsaFamilia.nome_favorecido.like("%" + nome + "%")) \
+                .filter(BeneficiarioBolsaFamilia.nis.like("%" + nis + "%")) \
+                .filter(BeneficiarioBolsaFamilia.nis.not_in(session.query(BeneficiarioAuxilio.nis).filter(
+                    BeneficiarioAuxilio.nome_beneficiario.like("%" + nome + "%")).filter(
+                    BeneficiarioAuxilio.nis.like("%" + nis + "%")))).group_by(BeneficiarioBolsaFamilia.nis)
 
         print(data)
 

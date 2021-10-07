@@ -11,8 +11,8 @@
         <div class="form-group mb-3">
             <label for="tipoBusca">Tipo de Busca:</label>
             <select class="form-select" name="tipoBusca" id="tipoBusca">
-                <option value="d" {{ devido }}>Devido</option>
-                <option value="i" {{ indevido }}>Indevido</option>
+                <option value="d" {{ devido }}>Recebeu ambos auxilios</option>
+                <option value="i" {{ indevido }}>Recebeu somente BF</option>
             </select>
         </div>
         <div class="form-group mb-3">
@@ -43,9 +43,9 @@
                 </tr>
             {% for b in data %}
                 <tr>
-                    <td>{{ b.nome_beneficiario }}</td>
+                    <td>{{ b.nome_beneficiario }}{{ b.nome_favorecido }}</td>
                     <td>{{ b.nis }}</td>
-                    <td>{{ b.cpf_beneficiario }}</td>
+                    <td>{{ b.cpf_beneficiario }}{{ b.cpf }}</td>
                 </tr>
             {% endfor %}
             </table>
