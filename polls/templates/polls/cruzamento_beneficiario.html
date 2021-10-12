@@ -1,4 +1,5 @@
 {% extends "polls/menu.html" %}
+{% load static %}
 
 {% block titulo %}Web Crawling{% endblock %}
 
@@ -9,20 +10,30 @@
     <form method="POST" class="form-signin" action="/polls/cruzamento/beneficiarios/">
         {% csrf_token %}
         <div class="form-group mb-3">
+            <label for="tipoBusca">Tipo de Busca:</label>
+            <select class="form-select" name="tipoBusca" id="tipoBusca">
+                <option value="prefeitura" {{ prefeitura }}>Prefeituras</option>
+                <option value="bolsa" {{ bolsa }}>Bolsa Família</option>
+            </select>
+        </div>
+        <div class="form-group mb-3">
             <label for="nomeBeneficiario">Nome do Beneficíario:</label>
             <input type="text" class="form-control" id="nomeBeneficiario" name="nomeBeneficiario" value="{{ nome }}" required>
+        </div>
+        <div class="form-group mb-3">
+            <label for="nis">NIS:</label>
+            <input type="text" class="form-control" id="nis" name="nis" value="{{ nis }}" placeholder="Número do NIS">
         </div>
         <button type="submit" class="btn btn-primary">Buscar<i class="ui search icon"></i></button>
     </form>
 
+{% endblock %}
+
+{% block optional %}
     {% if data != None and data != "" %}
-        <table>
-            {% for b in data %}
-                {{ b }}
-            {% endfor %}
-        </table>
+        <div class="d-flex justify-content-center justify-content-lg-between p-4 border-bottom">
+            {{ data | safe }}
+        </div>
     {% endif %}
-
-
-
+    <script src="{% static 'polls/cruzamento.js' %}"></script>
 {% endblock %}

@@ -16,16 +16,16 @@ class Crawler:
         "Serra": "http://transparencia.serratalhada.pe.gov.br/folhas-pagamentos-servidores/ativos?"
     }
 
-    def buscar(self, url):
+    def buscar(self, url, id=""):
         chrome_options = Options()
         # chrome_options.add_argument("--headless")  ## faz com que o browser não abra durante o processo
         driver = webdriver.Chrome(executable_path='chromedriver',
                                   options=chrome_options)  ## caminho para o seu webdriver
 
-        driver.implicitly_wait(10)
+        driver.implicitly_wait(100)
         driver.get(url)  ## carrega a página (htlm, js, etc.)
 
-        driver.find_element_by_id("lista")
+        driver.find_element_by_id(id)
         html = driver.page_source
 
         return html
@@ -39,20 +39,26 @@ class Crawler:
             url = self.urls[cidade] + "?ano=" + ano + "&servidor=" + servidor + "&mes=" + mes
         print(url)
 
-        html = self.buscar(url)
+        html = self.buscar(url, "table")
 
         soup = BeautifulSoup(html, 'html.parser')
         tabela = soup.find("table", id="table")  ## busca tabela com dados
-        return tabela
+        return tabela.prettify()
 
-    def crawler_bolsafamilia(self):
+    def crawler_bolsafamilia(self, nome="", nis=""):
 
-        # nis = "&cpfNisBeneficiario=2.362.676.777-5"
-        # url = "https://www.portaltransparencia.gov.br/beneficios/bolsa-familia?uf=PE&municipio=18443&de=01/01/2020&ate=31/12/2020&tipoBeneficio=1&nomeMunicipio=TRIUNFO&ordenarPor=beneficiario&direcao=asc"+nis
-        # print(url)
+        if nis != "":
+            nis = "&cpfNisBeneficiario=" + nis  # &cpfNisBeneficiario=2.362.676.777-5
 
-        html = self.buscar("https://www.portaltransparencia.gov.br/beneficios/bolsa-familia?paginacaoSimples=true&tamanhoPagina=&offset=&direcaoOrdenacao=asc&colunasSelecionadas=linkDetalhamento%2Cuf%2Cmunicipio%2Ccpf%2Cnis%2Cbeneficiario%2CvalorTotalPeriodo&de=01%2F01%2F2020&ate=31%2F12%2F2020&uf=PE&nomeMunicipio=TRIUNFO&cpfNisBeneficiario=2.362.676.777-5")
+        if nome != "":
+            nome = "&nomeBeneficiario=" + nome.replace(" ", "+")  # &nomeBeneficiario=ACUCENA+DIAS+DO+NASCIMENTO+SANTOS
+
+        url = "https://www.portaltransparencia.gov.br/beneficios/bolsa-familia?paginacaoSimples=true&tamanhoPagina=&offset=&direcaoOrdenacao=asc&colunasSelecionadas=linkDetalhamento%2Cuf%2Cmunicipio%2Ccpf%2Cnis%2Cbeneficiario%2CvalorTotalPeriodo&de=01%2F01%2F2020&ate=31%2F12%2F2020&uf=PE&nomeMunicipio=TRIUNFO"
+
+        print(url + nis + nome)
+
+        html = self.buscar(url + nis + nome, "lista")
 
         soup = BeautifulSoup(html, 'html.parser')
         tabela = soup.find("table", id="lista")  ## busca tabela com dados
-        return tabela
+        return tabela.prettify()

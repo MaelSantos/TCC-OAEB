@@ -1,3 +1,5 @@
+from builtins import type
+
 from django.shortcuts import render, redirect
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -23,12 +25,20 @@ def cruzamento(request):
 def cruzar(request):
     if request.method == "POST":
         nome = request.POST.get('nomeBeneficiario')
+        nis = request.POST.get('nis')
+        tipoBusca = request.POST.get('tipoBusca')
 
-        # html = crawler.crawler_prefeitura('SantaCruz', nome)
-        html = crawler.crawler_bolsafamilia()
-        print(html)
+        if tipoBusca == "prefeitura":
+            bolsa = ""
+            prefeitura = "selected"
+            html = crawler.crawler_prefeitura('SantaCruz', nome)
+        elif tipoBusca == "bolsa":
+            prefeitura = ""
+            bolsa = "selected"
+            html = crawler.crawler_bolsafamilia(nome, nis)
 
-        return render(request, 'polls/cruzamento_beneficiario.html', {'data': html, "nome": nome})
+        return render(request, 'polls/cruzamento_beneficiario.html', {'data': html, "nome": nome, "nis": nis,
+                                                                      "prefeitura": prefeitura, "bolsa": bolsa})
     else:
         return redirect('cruzamento')
 
@@ -42,7 +52,6 @@ def cruzar_bolsa_famila(request):
         nome = request.POST.get('nomeBeneficiario')
         nis = request.POST.get('nis')
         tipoBusca = request.POST.get('tipoBusca')
-        # cpf = request.POST.get('cpf')
 
         if tipoBusca == "d":
             devido = "selected"
@@ -65,7 +74,7 @@ def cruzar_bolsa_famila(request):
                     BeneficiarioAuxilio.nome_beneficiario.like("%" + nome + "%")).filter(
                     BeneficiarioAuxilio.nis.like("%" + nis + "%")))).group_by(BeneficiarioBolsaFamilia.nis)
 
-        print(data)
+        # print(data)
 
         return render(request, 'polls/bolsa_familia.html',
                       {'data': data, "nome": nome, "nis": nis, "devido": devido, "indevido": indevido})
