@@ -27,11 +27,12 @@ def cruzar(request):
         nome = request.POST.get('nomeBeneficiario')
         nis = request.POST.get('nis')
         tipoBusca = request.POST.get('tipoBusca')
+        cidade = request.POST.get('cidade')
 
         if tipoBusca == "prefeitura":
             bolsa = ""
             prefeitura = "selected"
-            html = crawler.crawler_prefeitura('SantaCruz', nome)
+            html = crawler.crawler_prefeitura(cidade, nome)
         elif tipoBusca == "bolsa":
             prefeitura = ""
             bolsa = "selected"

@@ -1,6 +1,11 @@
 {% extends "polls/menu.html" %}
 {% load static %}
 
+{% block links %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.js"></script>
+{% endblock %}
+
 {% block titulo %}Web Crawling{% endblock %}
 
 {% block cruzamento %}active{% endblock %}
@@ -11,20 +16,35 @@
         {% csrf_token %}
         <div class="form-group mb-3">
             <label for="tipoBusca">Tipo de Busca:</label>
-            <select class="form-select" name="tipoBusca" id="tipoBusca">
+            <select class="form-select" name="tipoBusca" id="tipoBusca" onchange="exibirCidades()">
                 <option value="prefeitura" {{ prefeitura }}>Prefeituras</option>
                 <option value="bolsa" {{ bolsa }}>Bolsa Família</option>
             </select>
         </div>
+
+        <div class="form-group mb-3" id="divCidades">
+            <label for="cidade">Tipo de Busca:</label>
+            <select class="form-select" name="cidade" id="cidade">
+                <option value="SantaCruz" {{ cidade == "SantaCruz" | default:"selected" }}>Santa Cruz da Baixa Verde</option>
+                <option value="Serra" {% ?: cidade == "SantaCruz" "selected" %}>Serra Talhada</option>
+                <option value="Triunfo" {% firstof cidade var2 var3 %}>Triunfo</option>
+                <option value="Calumbi" {{ bolsa }}>Calumbi</option>
+                <option value="Floresta" {{ bolsa }}>Floresta</option>
+                <option value="Mirandiba" {{ bolsa }}>Mirandiba</option>
+                <option value="Betania" {{ bolsa }}>Betânia</option>
+            </select>
+        </div>
+
         <div class="form-group mb-3">
             <label for="nomeBeneficiario">Nome do Beneficíario:</label>
-            <input type="text" class="form-control" id="nomeBeneficiario" name="nomeBeneficiario" value="{{ nome }}" required>
+            <input type="text" class="form-control" id="nomeBeneficiario" name="nomeBeneficiario" value="{{ nome }}" placeholder="Nome">
         </div>
         <div class="form-group mb-3">
             <label for="nis">NIS:</label>
             <input type="text" class="form-control" id="nis" name="nis" value="{{ nis }}" placeholder="Número do NIS">
         </div>
-        <button type="submit" class="btn btn-primary">Buscar<i class="ui search icon"></i></button>
+        <button type="submit" id="buscar" class="btn btn-primary"><i class="ui search icon"></i></button>
+        <button type="button" id="verificar" class="btn btn-primary" onclick="verificarCampos()" >Buscar<i class="ui search icon"></i></button>
     </form>
 
 {% endblock %}
