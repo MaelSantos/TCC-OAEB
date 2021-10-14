@@ -39,7 +39,7 @@ def cruzar(request):
             html = crawler.crawler_bolsafamilia(nome, nis)
 
         return render(request, 'polls/cruzamento_beneficiario.html', {'data': html, "nome": nome, "nis": nis,
-                                                                      "prefeitura": prefeitura, "bolsa": bolsa})
+                                                                      "prefeitura": prefeitura, "bolsa": bolsa, cidade: "selected"})
     else:
         return redirect('cruzamento')
 

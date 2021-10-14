@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block links %}
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.css" xmlns:>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.js"></script>
 {% endblock %}
 
@@ -25,13 +25,13 @@
         <div class="form-group mb-3" id="divCidades">
             <label for="cidade">Tipo de Busca:</label>
             <select class="form-select" name="cidade" id="cidade">
-                <option value="SantaCruz" {{ cidade == "SantaCruz" | default:"selected" }}>Santa Cruz da Baixa Verde</option>
-                <option value="Serra" {% ?: cidade == "SantaCruz" "selected" %}>Serra Talhada</option>
-                <option value="Triunfo" {% firstof cidade var2 var3 %}>Triunfo</option>
-                <option value="Calumbi" {{ bolsa }}>Calumbi</option>
-                <option value="Floresta" {{ bolsa }}>Floresta</option>
-                <option value="Mirandiba" {{ bolsa }}>Mirandiba</option>
-                <option value="Betania" {{ bolsa }}>Betânia</option>
+                <option value="SantaCruz" {{ SantaCruz }}>Santa Cruz da Baixa Verde</option>
+                <option value="Serra" {{ Serra }}>Serra Talhada</option>
+                <option value="Triunfo" {{ Triunfo }}>Triunfo</option>
+                <option value="Calumbi" {{ Calumbi }}>Calumbi</option>
+                <option value="Floresta" {{ Floresta }}>Floresta</option>
+                <option value="Mirandiba" {{ Mrandiba }}>Mirandiba</option>
+                <option value="Betania" {{ Betania }}>Betânia</option>
             </select>
         </div>
 
