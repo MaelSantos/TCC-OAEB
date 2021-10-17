@@ -23,7 +23,7 @@
         </div>
 
         <div class="form-group mb-3" id="divCidades">
-            <label for="cidade">Tipo de Busca:</label>
+            <label for="cidade">Cidade:</label>
             <select class="form-select" name="cidade" id="cidade">
                 <option value="SantaCruz" {{ SantaCruz }}>Santa Cruz da Baixa Verde</option>
                 <option value="Serra" {{ Serra }}>Serra Talhada</option>
@@ -33,6 +33,18 @@
                 <option value="Mirandiba" {{ Mrandiba }}>Mirandiba</option>
                 <option value="Betania" {{ Betania }}>Betânia</option>
             </select>
+        </div>
+
+        <div class="form-group mb-3" id="divMes">
+            <label for="periodo">Período:</label>
+            <input type="month" class="form-control" id="periodo" name="periodo" value="{{ periodo }}" placeholder="Período">
+        </div>
+
+        <div class="form-group mb-3" id="divPeriodo">
+            <label for="de">De:</label>
+            <input type="month" class="form-control" id="de" name="de" value="{{ de }}" placeholder="De">
+            <label for="ate">Até:</label>
+            <input type="month" class="form-control" id="ate" name="ate" value="{{ ate }}" placeholder="Até">
         </div>
 
         <div class="form-group mb-3">

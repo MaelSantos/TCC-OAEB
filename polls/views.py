@@ -29,17 +29,26 @@ def cruzar(request):
         tipoBusca = request.POST.get('tipoBusca')
         cidade = request.POST.get('cidade')
 
+        de = request.POST.get('de')
+        ate = request.POST.get('ate')
+        periodo = request.POST.get('periodo')
+
         if tipoBusca == "prefeitura":
             bolsa = ""
             prefeitura = "selected"
-            html = crawler.crawler_prefeitura(cidade, nome)
+            periodo_prefeitura = periodo.split('-')
+            mes = periodo_prefeitura[1]
+            ano = periodo_prefeitura[0]
+            html = crawler.crawler_prefeitura(cidade, nome, mes, ano)
         elif tipoBusca == "bolsa":
             prefeitura = ""
             bolsa = "selected"
-            html = crawler.crawler_bolsafamilia(nome, nis)
+            html = crawler.crawler_bolsafamilia(nome, nis, de, ate)
 
         return render(request, 'polls/cruzamento_beneficiario.html', {'data': html, "nome": nome, "nis": nis,
-                                                                      "prefeitura": prefeitura, "bolsa": bolsa, cidade: "selected"})
+                                                                      "prefeitura": prefeitura, "bolsa": bolsa,
+                                                                      cidade: "selected", "de": de, "ate": ate,
+                                                                      "periodo": periodo})
     else:
         return redirect('cruzamento')
 

@@ -1,5 +1,6 @@
 
 $("#buscar").hide()
+exibirCidades()
 
 if($("#lista") != undefined){
     $("#lista").show()
@@ -8,23 +9,24 @@ if($("#lista") != undefined){
 }
 
 function verificarCampos(){
-    nome = $("#nomeBeneficiario").val().trim()
-    nis = $("#nis").val().trim()
-
-    if(nis == "" && nome == "")
-        $.alert("Campos vazios")
-    else
-        $("#buscar").click()
+    $("#buscar").click()
 }
 
 function exibirCidades(){
 
     tipoBusca = $("#tipoBusca").val()
+    console.log(tipoBusca)
 
-    if(tipoBusca == "prefeitura")
+    if(tipoBusca == "prefeitura"){
         $("#divCidades").show()
-    else
+        $("#divMes").show()
+        $("#divPeriodo").hide()
+    }
+    else{
         $("#divCidades").hide()
+        $("#divMes").hide()
+        $("#divPeriodo").show()
+    }
 
 }
 

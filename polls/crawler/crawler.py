@@ -1,6 +1,7 @@
 from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.support.wait import WebDriverWait
 
 
 class Crawler:
@@ -22,10 +23,11 @@ class Crawler:
         driver = webdriver.Chrome(executable_path='chromedriver',
                                   options=chrome_options)  ## caminho para o seu webdriver
 
-        driver.implicitly_wait(100)
+        driver.implicitly_wait(100000)
         driver.get(url)  ## carrega a página (htlm, js, etc.)
 
-        driver.find_element_by_id(id)
+        # driver.find_element_by_id(id)
+        # WebDriverWait(driver, 100)
         html = driver.page_source
 
         return html
@@ -45,7 +47,7 @@ class Crawler:
         tabela = soup.find("table", id="table")  ## busca tabela com dados
         return tabela.prettify()
 
-    def crawler_bolsafamilia(self, nome="", nis=""):
+    def crawler_bolsafamilia(self, nome="", nis="", de='2020-01', ate='2021-12'):
 
         if nis != "":
             nis = "&cpfNisBeneficiario=" + nis  # &cpfNisBeneficiario=2.362.676.777-5
@@ -53,11 +55,18 @@ class Crawler:
         if nome != "":
             nome = "&nomeBeneficiario=" + nome.replace(" ", "+")  # &nomeBeneficiario=ACUCENA+DIAS+DO+NASCIMENTO+SANTOS
 
-        url = "https://www.portaltransparencia.gov.br/beneficios/bolsa-familia?paginacaoSimples=true&tamanhoPagina=&offset=&direcaoOrdenacao=asc&colunasSelecionadas=linkDetalhamento%2Cuf%2Cmunicipio%2Ccpf%2Cnis%2Cbeneficiario%2CvalorTotalPeriodo&de=01%2F01%2F2020&ate=31%2F12%2F2020&uf=PE&nomeMunicipio=TRIUNFO"
+        listDe = de.split("-")
+        listAte = ate.split("-")
 
-        print(url + nis + nome)
+        de = "&de=01%2F"+listDe[1]+"%2F"+listDe[0]
+        ate = "&ate=31%2F"+listAte[1]+"%2F"+listAte[0]
 
-        html = self.buscar(url + nis + nome, "lista")
+        url = "https://www.portaltransparencia.gov.br/beneficios/bolsa-familia?paginacaoSimples=true&tamanhoPagina=&offset=&direcaoOrdenacao=asc&colunasSelecionadas=linkDetalhamento%2Cuf%2Cmunicipio%2Ccpf%2Cnis%2Cbeneficiario%2CvalorTotalPeriodo&uf=PE&nomeMunicipio=TRIUNFO"
+
+        linkTotal = url + nis + nome + de + ate
+        print(linkTotal)
+
+        html = self.buscar(linkTotal, "lista")
 
         soup = BeautifulSoup(html, 'html.parser')
         tabela = soup.find("table", id="lista")  ## busca tabela com dados
