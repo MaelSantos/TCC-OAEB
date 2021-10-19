@@ -4,10 +4,12 @@ from . import views
 
 urlpatterns = [
     path('', views.index, name='index'),
-    path('cruzamento/', views.cruzamento, name='cruzamento'),
-    path('cruzamento/beneficiarios/', views.cruzar, name='cruzar'),
+    path('beneficiarios/', views.busca, name='busca'),
+    path('beneficiarios/buscar/', views.buscar, name='buscar'),
     path('bolsa-familia/', views.bolsa_famila, name='bolsa_familia'),
-    path('bolsa-familia/beneficiarios/', views.cruzar_bolsa_famila, name='cruzar_bolsa_familia'),
-    # path('', views.BeneficiarioListView.as_view(), name='BeneficiarioList'),
-    # path("<slug:slug>/", views.BeneficiarioDetailView.as_view(), name='BeneficiarioDetail')
+    path('bolsa-familia/beneficiarios/', views.buscar_bolsa_famila, name='busca_bolsa_familia'),
+
+    path('cruzamento/auxilios/', views.cruzamento, name='cruzamento_auxilios'),
+    path('cruzamento/auxilios/busca/', views.cruzar, name='cruzar_auxilios'),
+
 ]

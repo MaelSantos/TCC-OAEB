@@ -1,46 +1,71 @@
-@extends('templates.menu', ['busca' => 'active'])
+{% extends "polls/menu.html" %}
+{% load static %}
 
-@section('titulo', 'Beneficíarios')
+{% block links %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.css" xmlns:>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.js"></script>
+{% endblock %}
 
-@section('content')
+{% block titulo %}Web Crawling{% endblock %}
 
-    <form method="POST" class="ui large form" action="{{ route('busca.beneficiarios') }}">
-        @csrf
+{% block beneficiarios %}active{% endblock %}
+
+{% block content %}
+
+    <form method="POST" class="form-signin" action="/polls/beneficiarios/buscar/">
+        {% csrf_token %}
+        <div class="form-group mb-3">
+            <label for="tipoBusca">Tipo de Busca:</label>
+            <select class="form-select" name="tipoBusca" id="tipoBusca" onchange="exibirCidades()">
+                <option value="prefeitura" {{ prefeitura }}>Prefeituras</option>
+                <option value="bolsa" {{ bolsa }}>Bolsa Família</option>
+            </select>
+        </div>
+
+        <div class="form-group mb-3" id="divCidades">
+            <label for="cidade">Cidade:</label>
+            <select class="form-select" name="cidade" id="cidade">
+                <option value="SantaCruz" {{ SantaCruz }}>Santa Cruz da Baixa Verde</option>
+                <option value="Serra" {{ Serra }}>Serra Talhada</option>
+                <option value="Triunfo" {{ Triunfo }}>Triunfo</option>
+                <option value="Calumbi" {{ Calumbi }}>Calumbi</option>
+                <option value="Floresta" {{ Floresta }}>Floresta</option>
+                <option value="Mirandiba" {{ Mrandiba }}>Mirandiba</option>
+                <option value="Betania" {{ Betania }}>Betânia</option>
+            </select>
+        </div>
+
+        <div class="form-group mb-3" id="divMes">
+            <label for="periodo">Período:</label>
+            <input type="month" class="form-control" id="periodo" name="periodo" value="{{ periodo }}" placeholder="Período">
+        </div>
+
+        <div class="form-group mb-3" id="divPeriodo">
+            <label for="de">De:</label>
+            <input type="month" class="form-control" id="de" name="de" value="{{ de }}" placeholder="De">
+            <label for="ate">Até:</label>
+            <input type="month" class="form-control" id="ate" name="ate" value="{{ ate }}" placeholder="Até">
+        </div>
+
         <div class="form-group mb-3">
             <label for="nomeBeneficiario">Nome do Beneficíario:</label>
-            <input type="text" class="form-control" id="nomeBeneficiario" name="nomeBeneficiario"
-                value="{{ @$nome }}" required>
+            <input type="text" class="form-control" id="nomeBeneficiario" name="nomeBeneficiario" value="{{ nome }}" placeholder="Nome">
         </div>
-        <button type="submit" class="btn btn-primary">Buscar<i class="ui search icon"></i></button>
+        <div class="form-group mb-3">
+            <label for="nis">NIS:</label>
+            <input type="text" class="form-control" id="nis" name="nis" value="{{ nis }}" placeholder="Número do NIS">
+        </div>
+        <button type="submit" id="buscar" class="btn btn-primary"><i class="ui search icon"></i></button>
+        <button type="button" id="verificar" class="btn btn-primary" onclick="verificarCampos()" >Buscar<i class="ui search icon"></i></button>
     </form>
 
-@endsection("content")
+{% endblock %}
 
-@section('optional')
-    @isset($beneficiarios)
-        <table class="table table-striped">
-            <tr>
-                <th>Nome</th>
-                <th>CPF</th>
-                <th>NIS</th>
-                <th>Responsavel</th>
-                <th>CPF Responsavel</th>
-                <th>NIS Responsavel</th>
-                <th>Enquadramento</th>
-            </tr>
-
-            @foreach ($beneficiarios as $b)
-                <tr>
-                    <td>{{ $b['nome_beneficiario'] }}</td>
-                    <td>{{ $b['cpf_beneficiario'] }}</td>
-                    <td>{{ $b['nis'] <= 0 ? '-' : $b['nis'] }}</td>
-                    <td>{{ $b['resposnsavel'] }}</td>
-                    <td>{{ $b['cpf_responsavel'] <= 0 ? '-' : $b['cpf_responsavel'] }}</td>
-                    <td>{{ $b['nis_responsavel'] <= 0 ? '-' : $b['nis_responsavel'] }}</td>
-                    <td>{{ $b['enquadramento'] }}</td>
-                </tr>
-            @endforeach
-
-        </table>
-    @endisset
-@endsection('optional')
+{% block optional %}
+    {% if data != None and data != "" %}
+        <div class="d-flex justify-content-center justify-content-lg-between p-4 border-bottom">
+            {{ data | safe }}
+        </div>
+    {% endif %}
+    <script src="{% static 'polls/cruzamento.js' %}"></script>
+{% endblock %}

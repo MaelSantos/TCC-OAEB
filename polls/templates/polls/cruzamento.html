@@ -1,0 +1,31 @@
+{% extends "polls/menu.html" %}
+{% load static %}
+
+{% block links %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.css" xmlns:>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.js"></script>
+{% endblock %}
+
+{% block titulo %}Web Crawling{% endblock %}
+
+{% block cruzamento %}active{% endblock %}
+
+{% block content %}
+
+    <form method="POST" class="form-signin" action="/polls/cruzamento/auxilios/busca/">
+        {% csrf_token %}
+        <div class="form-group mb-3">
+            <label for="tipoCruzamento">Tipo de Cruzamento:</label>
+            <select class="form-select" name="tipoCruzamento" id="tipoCruzamento">
+                <option value="ax_bf" {{ ax_bf }}>Bolsa Família vs Auxílio Emergencial</option>
+            </select>
+        </div>
+
+        <button type="submit" id="buscar" class="btn btn-primary">Iniciar Cruzamento<i class="ui search icon"></i></button>
+
+    </form>
+
+{% endblock %}
+
+{% block optional %}
+{% endblock %}

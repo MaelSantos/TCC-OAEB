@@ -18,11 +18,11 @@ def index(request):
     return render(request, 'polls/principal.html')
 
 
-def cruzamento(request):
-    return render(request, 'polls/cruzamento_beneficiario.html')
+def busca(request):
+    return render(request, 'polls/busca_beneficiario.html')
 
 
-def cruzar(request):
+def buscar(request):
     if request.method == "POST":
         nome = request.POST.get('nomeBeneficiario')
         nis = request.POST.get('nis')
@@ -45,19 +45,19 @@ def cruzar(request):
             bolsa = "selected"
             html = crawler.crawler_bolsafamilia(nome, nis, de, ate)
 
-        return render(request, 'polls/cruzamento_beneficiario.html', {'data': html, "nome": nome, "nis": nis,
-                                                                      "prefeitura": prefeitura, "bolsa": bolsa,
-                                                                      cidade: "selected", "de": de, "ate": ate,
-                                                                      "periodo": periodo})
+        return render(request, 'polls/busca_beneficiario.html', {'data': html, "nome": nome, "nis": nis,
+                                                                 "prefeitura": prefeitura, "bolsa": bolsa,
+                                                                 cidade: "selected", "de": de, "ate": ate,
+                                                                 "periodo": periodo})
     else:
-        return redirect('cruzamento')
+        return redirect('buscar')
 
 
 def bolsa_famila(request):
     return render(request, "polls/bolsa_familia.html")
 
 
-def cruzar_bolsa_famila(request):
+def buscar_bolsa_famila(request):
     if request.method == "POST":
         nome = request.POST.get('nomeBeneficiario')
         nis = request.POST.get('nis')
@@ -81,12 +81,20 @@ def cruzar_bolsa_famila(request):
                 BeneficiarioBolsaFamilia.nome_favorecido.like("%" + nome + "%")) \
                 .filter(BeneficiarioBolsaFamilia.nis.like("%" + nis + "%")) \
                 .filter(BeneficiarioBolsaFamilia.nis.not_in(session.query(BeneficiarioAuxilio.nis).filter(
-                    BeneficiarioAuxilio.nome_beneficiario.like("%" + nome + "%")).filter(
-                    BeneficiarioAuxilio.nis.like("%" + nis + "%")))).group_by(BeneficiarioBolsaFamilia.nis)
+                BeneficiarioAuxilio.nome_beneficiario.like("%" + nome + "%")).filter(
+                BeneficiarioAuxilio.nis.like("%" + nis + "%")))).group_by(BeneficiarioBolsaFamilia.nis)
 
         # print(data)
 
         return render(request, 'polls/bolsa_familia.html',
                       {'data': data, "nome": nome, "nis": nis, "devido": devido, "indevido": indevido})
     else:
-        return redirect('cruzar_bolsa_familia')
+        return redirect('busca_bolsa_familia')
+
+
+def cruzamento(request):
+    return render(request, 'polls/cruzamento.html')
+
+
+def cruzar(request):
+    return render(request, 'polls/cruzamento.html')
