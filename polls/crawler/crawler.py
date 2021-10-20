@@ -1,10 +1,12 @@
+import re
 import time
 
 from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.wait import WebDriverWait
-
+from selenium.webdriver.support.ui import Select
+from polls.models import Cruzamento
 
 class Crawler:
     url_padrao = "folha-pagamentos/servidoresAtivos?"
@@ -78,5 +80,66 @@ class Crawler:
         tabela = soup.find("table", id="lista")  ## busca tabela com dados
         return tabela.prettify()
 
-    def cruzar_auxilios(self):
-        pass
+    def cruzar_auxilios(self, url):
+        chrome_options = Options()
+        # if id == "table":
+        #     chrome_options.add_argument("--headless")  ## faz com que o browser não abra durante o processo
+        driver = webdriver.Chrome(executable_path='chromedriver',
+                                  options=chrome_options)  ## caminho para o seu webdriver
+        print(url)
+        driver.implicitly_wait(3)
+        driver.get(url)  ## carrega a página (htlm, js, etc.)
+        time.sleep(3)
+
+        driver.find_element_by_class_name("botao__gera_paginacao_completa").click()
+        time.sleep(3)
+
+        select = Select(driver.find_element_by_name("lista_length"))
+        select.select_by_value('50')
+
+        time.sleep(3)
+        text_total = driver.find_element_by_id("lista_info").get_attribute('innerHTML')
+        total = text_total.split(" ")[-1]
+
+        tbody = driver.find_element_by_id("lista").find_element_by_xpath("tbody").text  # get_attribute('innerHTML')
+        # for i in range(int(total)-1):
+        #     print("pagina: " + str(i + 1))
+        #     driver.find_element_by_id("lista_next").click()
+        #     time.sleep(5)
+        #     tbody += driver.find_element_by_id("lista").find_element_by_xpath("tbody").text+"\n" #get_attribute('innerHTML')
+
+        return tbody
+
+
+de = "&de=01%2F01%2F2020"
+ate = "&ate=31%2F12%2F2020"
+url = "https://www.portaltransparencia.gov.br/beneficios/bolsa-familia?paginacaoSimples=true&tamanhoPagina=&offset=&direcaoOrdenacao=asc&colunasSelecionadas=linkDetalhamento%2Cuf%2Cmunicipio%2Ccpf%2Cnis%2Cbeneficiario%2CvalorTotalPeriodo&uf=PE&nomeMunicipio=SANTA+CRUZ+DA+BAIXA+VERDE";
+
+c = Crawler()
+
+html = c.cruzar_auxilios(url + de + ate)
+
+# print(html)
+
+beneficiarios = html.split("\n")
+
+
+for b in beneficiarios:
+    text_formatado = b.replace("-", ",").replace("*", "0")
+    list_beneficiario = re.split(r'\s(?=\d+)', text_formatado)
+
+    c = Cruzamento()
+
+    c.estado = list_beneficiario[0][9:11]
+    c.cidade = "SANTA CRUZ DA BAIXA VERDE"
+    cpf = list_beneficiario[1].replace(",", "").replace(".", "")
+    c.cpf = "***." + cpf[3:6] + "." + cpf[6:9] + "-**"
+    c.nis = list_beneficiario[2][0:15].replace(",", "-")
+    c.nome = list_beneficiario[2][16::]
+    c.valor = list_beneficiario[3]
+    c.tipo = "BF"
+
+    # print(list_beneficiario)
+    print(c)
+    c.save()
+
