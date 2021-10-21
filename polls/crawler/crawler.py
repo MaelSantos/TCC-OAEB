@@ -6,6 +6,8 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support.ui import Select
+
+from polls.dao.dao import Dao
 from polls.models import Cruzamento
 
 class Crawler:
@@ -102,11 +104,11 @@ class Crawler:
         total = text_total.split(" ")[-1]
 
         tbody = driver.find_element_by_id("lista").find_element_by_xpath("tbody").text  # get_attribute('innerHTML')
-        # for i in range(int(total)-1):
-        #     print("pagina: " + str(i + 1))
-        #     driver.find_element_by_id("lista_next").click()
-        #     time.sleep(5)
-        #     tbody += driver.find_element_by_id("lista").find_element_by_xpath("tbody").text+"\n" #get_attribute('innerHTML')
+        for i in range(int(total)-1):
+            print("pagina: " + str(i + 1))
+            driver.find_element_by_id("lista_next").click()
+            time.sleep(5)
+            tbody += driver.find_element_by_id("lista").find_element_by_xpath("tbody").text+"\n" #get_attribute('innerHTML')
 
         return tbody
 
@@ -123,7 +125,7 @@ html = c.cruzar_auxilios(url + de + ate)
 
 beneficiarios = html.split("\n")
 
-
+dao = Dao()
 for b in beneficiarios:
     text_formatado = b.replace("-", ",").replace("*", "0")
     list_beneficiario = re.split(r'\s(?=\d+)', text_formatado)
@@ -140,6 +142,7 @@ for b in beneficiarios:
     c.tipo = "BF"
 
     # print(list_beneficiario)
+    dao.create(c)
     print(c)
-    c.save()
+
 

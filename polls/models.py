@@ -84,14 +84,14 @@ class Cruzamento(Base):
     id = Column(Integer, primary_key=True)
     estado = Column(String(2))
     cidade = Column(String(50))
-    cpf = Column(String(20))
-    nis = Column(String(20))
+    cpf = Column(String(20), unique=True)
+    nis = Column(String(20), unique=True)
     nome = Column(String(100))
     valor = Column(String(20))
     tipo = Column(String(10))
 
     def __str__(self):
-        return f" NOME: {self.nome} - NIS: {self.nis} - TIPO: {self.tipo} - VALOR: {self.valor}"
+        return f"ID: {self.id} - NOME: {self.nome} - NIS: {self.nis} - TIPO: {self.tipo} - VALOR: {self.valor}"
 
 
 Base.metadata.create_all(engine)
