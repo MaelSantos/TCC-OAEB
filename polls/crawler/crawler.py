@@ -8,7 +8,8 @@ from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support.ui import Select
 
 from polls.dao.dao import Dao
-from polls.models import Cruzamento
+from polls.models import BolsaFamilia, AuxilioEmergencial
+
 
 class Crawler:
     url_padrao = "folha-pagamentos/servidoresAtivos?"
@@ -91,6 +92,7 @@ class Crawler:
         print(url)
         driver.implicitly_wait(3)
         driver.get(url)  ## carrega a página (htlm, js, etc.)
+        driver.refresh()
         time.sleep(3)
 
         driver.find_element_by_class_name("botao__gera_paginacao_completa").click()
@@ -115,34 +117,84 @@ class Crawler:
 
 de = "&de=01%2F01%2F2020"
 ate = "&ate=31%2F12%2F2020"
-url = "https://www.portaltransparencia.gov.br/beneficios/bolsa-familia?paginacaoSimples=true&tamanhoPagina=&offset=&direcaoOrdenacao=asc&colunasSelecionadas=linkDetalhamento%2Cuf%2Cmunicipio%2Ccpf%2Cnis%2Cbeneficiario%2CvalorTotalPeriodo&uf=PE&nomeMunicipio=SANTA+CRUZ+DA+BAIXA+VERDE";
+estado = "&uf=PE&nomeMunicipio=SANTA+CRUZ+DA+BAIXA+VERDE"
+
+url_bolsa = "https://www.portaltransparencia.gov.br/beneficios/bolsa-familia?paginacaoSimples=true&tamanhoPagina=&offset=&direcaoOrdenacao=asc&colunasSelecionadas=linkDetalhamento%2Cuf%2Cmunicipio%2Ccpf%2Cnis%2Cbeneficiario%2CvalorTotalPeriodo";
+
+url_auxilio = "https://www.portaltransparencia.gov.br/beneficios/auxilio-emergencial?paginacaoSimples=true&tamanhoPagina=&offset=&direcaoOrdenacao=asc&colunasSelecionadas=linkDetalhamento%2Ccpf%2Cnis%2Cbeneficiario%2Cobservacao%2CvalorTotalPeriodo%2Cuf%2Cmunicipio"
 
 c = Crawler()
 
-html = c.cruzar_auxilios(url + de + ate)
+urlFinal = url_auxilio + de + ate + estado
+
+html = c.cruzar_auxilios(urlFinal)
 
 # print(html)
 
 beneficiarios = html.split("\n")
 
 dao = Dao()
+# for b in beneficiarios:
+#     text_formatado = b.replace("-", ",").replace("*", "0").replace(".", "")
+#     list_beneficiario = re.split(r'\s(?=\d+)', text_formatado)
+#
+#     c = BolsaFamilia()
+#
+#     c.uf = list_beneficiario[0][9:11]
+#     c.municipio = "SANTA CRUZ DA BAIXA VERDE"
+#     cpf = list_beneficiario[1].replace(",", "")
+#     c.cpf = "***." + cpf[3:6] + "." + cpf[6:9] + "-**"
+#     c.nis = list_beneficiario[2][0:12].replace(",", "").replace(".", "")
+#     c.nome = list_beneficiario[2][13::]
+#     c.valor = list_beneficiario[3]
+#
+#     print(list_beneficiario)
+#     # dao.create(c)
+#     print(c)
+
 for b in beneficiarios:
-    text_formatado = b.replace("-", ",").replace("*", "0")
+    text_formatado = b.replace("-", ",").replace("*", "0").replace(".", "")
     list_beneficiario = re.split(r'\s(?=\d+)', text_formatado)
 
-    c = Cruzamento()
+    print(list_beneficiario)
 
-    c.estado = list_beneficiario[0][9:11]
-    c.cidade = "SANTA CRUZ DA BAIXA VERDE"
-    cpf = list_beneficiario[1].replace(",", "").replace(".", "")
-    c.cpf = "***." + cpf[3:6] + "." + cpf[6:9] + "-**"
-    c.nis = list_beneficiario[2][0:15].replace(",", "-")
-    c.nome = list_beneficiario[2][16::]
-    c.valor = list_beneficiario[3]
-    c.tipo = "BF"
+    quantidade = len(list_beneficiario)
 
-    # print(list_beneficiario)
-    dao.create(c)
-    print(c)
+    a = AuxilioEmergencial()
+    a.uf = list_beneficiario[0][9:11]
+    a.municipio = "SANTA CRUZ DA BAIXA VERDE"
 
+    if quantidade == 4:
+        a.nis = list_beneficiario[2][0:12].replace(",", "")
+        nome_obs = list_beneficiario[2][13::]
+        cpf = list_beneficiario[1].replace(",", "")
+    else:
+        a.nis = ""
+        cpf = list_beneficiario[1][0:12].replace(",", "")
+        nome_obs = list_beneficiario[1][13::]
 
+    a.cpf = "***." + cpf[3:6] + "." + cpf[6:9] + "-**"
+    index_obs = nome_obs.find("Não há")
+
+    if index_obs == -1:
+        index_obs = nome_obs.find("Valor devolvido à União.")
+
+    if index_obs == -1:
+        index_obs = nome_obs.find("Pagamento bloqueado ou cancelado")
+
+    if index_obs != -1:
+        a.observacao = nome_obs[index_obs::]
+        a.nome = nome_obs[0:index_obs - 1]
+    else:
+        a.observacao = "Não há"
+        a.nome = nome_obs
+
+    print(index_obs)
+    if quantidade == 4:
+        a.valor = list_beneficiario[3]
+    else:
+        a.valor = list_beneficiario[2]
+
+    dao.create(a)
+
+    print(str(quantidade)+": "+a.nis + " - " + a.nome + " - " + a.cpf + " - " + a.observacao)

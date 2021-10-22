@@ -78,20 +78,35 @@ class BeneficiarioBolsaFamilia(Base):
         return self.nome_favorecido
 
 
-class Cruzamento(Base):
-    __tablename__ = 'cruzamento'
+class BolsaFamilia(Base):
+    __tablename__ = 'bolsa_familia'
 
     id = Column(Integer, primary_key=True)
-    estado = Column(String(2))
-    cidade = Column(String(50))
+    uf = Column(String(2))
+    municipio = Column(String(50))
+    cpf = Column(String(20), unique=True)
+    nis = Column(String(20))
+    nome = Column(String(100))
+    valor = Column(String(20))
+
+    def __str__(self):
+        return f"ID: {self.id} - NOME: {self.nome} - NIS: {self.nis} - VALOR: {self.valor}"
+
+
+class AuxilioEmergencial(Base):
+    __tablename__ = 'auxilio_emergencial'
+
+    id = Column(Integer, primary_key=True)
+    uf = Column(String(2))
+    municipio = Column(String(50))
     cpf = Column(String(20), unique=True)
     nis = Column(String(20), unique=True)
     nome = Column(String(100))
+    observacao = Column(String(100))
     valor = Column(String(20))
-    tipo = Column(String(10))
 
     def __str__(self):
-        return f"ID: {self.id} - NOME: {self.nome} - NIS: {self.nis} - TIPO: {self.tipo} - VALOR: {self.valor}"
+        return f"ID: {self.id} - NOME: {self.nome} - NIS: {self.nis} - VALOR: {self.valor}"
 
 
 Base.metadata.create_all(engine)
