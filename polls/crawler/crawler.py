@@ -1,14 +1,10 @@
-import re
 import time
 
 from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.support.wait import WebDriverWait
+from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import Select
-
-from polls.dao.dao import Dao
-from polls.models import BolsaFamilia, AuxilioEmergencial
 
 
 class Crawler:
@@ -91,110 +87,31 @@ class Crawler:
                                   options=chrome_options)  ## caminho para o seu webdriver
         print(url)
         driver.implicitly_wait(3)
-        driver.get(url)  ## carrega a página (htlm, js, etc.)
-        driver.refresh()
+        driver.get(url)  ## carrega a página (html, js, etc.)
+        time.sleep(3)
+        # driver.refresh()  # evitar erros da pagina do auxilio
+        # time.sleep(3)
+
+        driver.find_element(By.CLASS_NAME, "botao__gera_paginacao_completa").click() #exibe toda a paginação
         time.sleep(3)
 
-        driver.find_element_by_class_name("botao__gera_paginacao_completa").click()
-        time.sleep(3)
-
-        select = Select(driver.find_element_by_name("lista_length"))
-        select.select_by_value('50')
+        select = Select(driver.find_element(By.NAME, "lista_length"))
+        select.select_by_value('50') #seleciona a quantidade maxima de exibição
 
         time.sleep(3)
-        text_total = driver.find_element_by_id("lista_info").get_attribute('innerHTML')
+        text_total = driver.find_element(By.ID, "lista_info").get_attribute('innerHTML')
         total = text_total.split(" ")[-1]
 
-        tbody = driver.find_element_by_id("lista").find_element_by_xpath("tbody").text  # get_attribute('innerHTML')
-        for i in range(int(total)-1):
-            print("pagina: " + str(i + 1))
-            driver.find_element_by_id("lista_next").click()
-            time.sleep(5)
-            tbody += driver.find_element_by_id("lista").find_element_by_xpath("tbody").text+"\n" #get_attribute('innerHTML')
+        html = "<table>"
+        tbody = driver.find_element(By.ID, "lista").find_element(By.XPATH, "tbody").get_attribute('outerHTML')
+        thead = driver.find_element(By.ID, "lista").find_element(By.XPATH, "thead").get_attribute('outerHTML')\
+            .replace("NIS Beneficiário", "NIS")
+        # for i in range(int(total)-1): # extrai as informações de todas as paginas
+        #     print("pagina: " + str(i + 1))
+        #     driver.find_element(By.ID, "lista_next").click()
+        #     time.sleep(5)
+        #     tbody += driver.find_element(By.ID, "lista").find_element(By.XPATH, "tbody").get_attribute('outerHTML')
 
-        return tbody
+        html += thead + tbody + "</table>"
 
-
-de = "&de=01%2F01%2F2020"
-ate = "&ate=31%2F12%2F2020"
-estado = "&uf=PE&nomeMunicipio=SANTA+CRUZ+DA+BAIXA+VERDE"
-
-url_bolsa = "https://www.portaltransparencia.gov.br/beneficios/bolsa-familia?paginacaoSimples=true&tamanhoPagina=&offset=&direcaoOrdenacao=asc&colunasSelecionadas=linkDetalhamento%2Cuf%2Cmunicipio%2Ccpf%2Cnis%2Cbeneficiario%2CvalorTotalPeriodo";
-
-url_auxilio = "https://www.portaltransparencia.gov.br/beneficios/auxilio-emergencial?paginacaoSimples=true&tamanhoPagina=&offset=&direcaoOrdenacao=asc&colunasSelecionadas=linkDetalhamento%2Ccpf%2Cnis%2Cbeneficiario%2Cobservacao%2CvalorTotalPeriodo%2Cuf%2Cmunicipio"
-
-c = Crawler()
-
-urlFinal = url_auxilio + de + ate + estado
-
-html = c.cruzar_auxilios(urlFinal)
-
-# print(html)
-
-beneficiarios = html.split("\n")
-
-dao = Dao()
-# for b in beneficiarios:
-#     text_formatado = b.replace("-", ",").replace("*", "0").replace(".", "")
-#     list_beneficiario = re.split(r'\s(?=\d+)', text_formatado)
-#
-#     c = BolsaFamilia()
-#
-#     c.uf = list_beneficiario[0][9:11]
-#     c.municipio = "SANTA CRUZ DA BAIXA VERDE"
-#     cpf = list_beneficiario[1].replace(",", "")
-#     c.cpf = "***." + cpf[3:6] + "." + cpf[6:9] + "-**"
-#     c.nis = list_beneficiario[2][0:12].replace(",", "").replace(".", "")
-#     c.nome = list_beneficiario[2][13::]
-#     c.valor = list_beneficiario[3]
-#
-#     print(list_beneficiario)
-#     # dao.create(c)
-#     print(c)
-
-for b in beneficiarios:
-    text_formatado = b.replace("-", ",").replace("*", "0").replace(".", "")
-    list_beneficiario = re.split(r'\s(?=\d+)', text_formatado)
-
-    print(list_beneficiario)
-
-    quantidade = len(list_beneficiario)
-
-    a = AuxilioEmergencial()
-    a.uf = list_beneficiario[0][9:11]
-    a.municipio = "SANTA CRUZ DA BAIXA VERDE"
-
-    if quantidade == 4:
-        a.nis = list_beneficiario[2][0:12].replace(",", "")
-        nome_obs = list_beneficiario[2][13::]
-        cpf = list_beneficiario[1].replace(",", "")
-    else:
-        a.nis = ""
-        cpf = list_beneficiario[1][0:12].replace(",", "")
-        nome_obs = list_beneficiario[1][13::]
-
-    a.cpf = "***." + cpf[3:6] + "." + cpf[6:9] + "-**"
-    index_obs = nome_obs.find("Não há")
-
-    if index_obs == -1:
-        index_obs = nome_obs.find("Valor devolvido à União.")
-
-    if index_obs == -1:
-        index_obs = nome_obs.find("Pagamento bloqueado ou cancelado")
-
-    if index_obs != -1:
-        a.observacao = nome_obs[index_obs::]
-        a.nome = nome_obs[0:index_obs - 1]
-    else:
-        a.observacao = "Não há"
-        a.nome = nome_obs
-
-    print(index_obs)
-    if quantidade == 4:
-        a.valor = list_beneficiario[3]
-    else:
-        a.valor = list_beneficiario[2]
-
-    dao.create(a)
-
-    print(str(quantidade)+": "+a.nis + " - " + a.nome + " - " + a.cpf + " - " + a.observacao)
+        return html
