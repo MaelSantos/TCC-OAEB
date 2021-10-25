@@ -15,10 +15,36 @@
     <form method="POST" class="form-signin" action="/polls/cruzamento/auxilios/busca/">
         {% csrf_token %}
         <div class="form-group mb-3">
+            <label for="base1">1ª Base:</label>
+            <select class="form-select" name="base1" id="base1">
+                <option value="bf1" {{ bf1 }}>Bolsa Família</option>
+                <option value="ae1" {{ ae1 }}>Auxílio Emergencial</option>
+            </select>
+        </div>
+
+        <div class="form-group mb-3">
             <label for="tipoCruzamento">Tipo de Cruzamento:</label>
             <select class="form-select" name="tipoCruzamento" id="tipoCruzamento">
-                <option value="ax_bf" {{ ax_bf }}>Bolsa Família vs Auxílio Emergencial</option>
+                <option value="ambas" {{ ambas }}>Contém em Ambos</option>
+                <option value="primeira" {{ primeira }}>Está presente somente na 1ª</option>
             </select>
+        </div>
+
+        <div class="form-group mb-3">
+            <label for="base2">2ª Base:</label>
+            <select class="form-select" name="base2" id="base2">
+                <option value="bf2" {{ bf2 }}>Bolsa Família</option>
+                <option value="ae2" {{ ae2 }}>Auxílio Emergencial</option>
+            </select>
+        </div>
+
+        <div class="form-group mb-3">
+            <label for="nomeBeneficiario">Nome do Beneficíario:</label>
+            <input type="text" class="form-control" id="nomeBeneficiario" name="nomeBeneficiario" value="{{ nome }}" placeholder="Nome">
+        </div>
+        <div class="form-group mb-3">
+            <label for="nis">NIS:</label>
+            <input type="text" class="form-control" id="nis" name="nis" value="{{ nis }}" placeholder="Número do NIS">
         </div>
 
         <button type="submit" id="buscar" class="btn btn-primary">Iniciar Cruzamento<i class="ui search icon"></i></button>
@@ -28,4 +54,10 @@
 {% endblock %}
 
 {% block optional %}
+    {% if data != None and data != "" %}
+        <div class="d-flex justify-content-center justify-content-lg-between p-4 border-bottom">
+            {{ data | safe }}
+        </div>
+    {% endif %}
+    <script src="{% static 'polls/cruzamento.js' %}"></script>
 {% endblock %}

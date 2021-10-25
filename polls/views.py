@@ -6,6 +6,7 @@ from sqlalchemy.orm import sessionmaker
 
 from .crawler.crawler import Crawler
 from .models import BeneficiarioAuxilio, BeneficiarioBolsaFamilia
+from .controller.cruzamento import Cruzamento
 
 crawler = Crawler()
 
@@ -97,4 +98,19 @@ def cruzamento(request):
 
 
 def cruzar(request):
-    return render(request, 'polls/cruzamento.html')
+    nome = request.POST.get('nomeBeneficiario')
+    nis = request.POST.get('nis')
+    tipoCruzamento = request.POST.get('tipoCruzamento')
+    base1 = request.POST.get('base1').replace("1", "")
+    base2 = request.POST.get('base2').replace("2", "")
+
+    c = Cruzamento()
+
+    if tipoCruzamento == "ambas":
+        data = c.cruzar_ae_bf_indevidos(nome=nome, nis=nis, base1=base1, base2=base2)
+    else:
+        data = c.cruzar_nao_bolsa(nome=nome, nis=nis, base1=base1, base2=base2)
+
+    return render(request, 'polls/cruzamento.html',
+                  {'data': data, "nome": nome, "nis": nis, tipoCruzamento: "selected", base1+"1": "selected",
+                   base2+"2": "selected"})

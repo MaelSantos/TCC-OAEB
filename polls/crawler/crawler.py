@@ -89,8 +89,11 @@ class Crawler:
         driver.implicitly_wait(3)
         driver.get(url)  ## carrega a página (html, js, etc.)
         time.sleep(3)
-        # driver.refresh()  # evitar erros da pagina do auxilio
-        # time.sleep(3)
+
+        body = driver.find_element(By.ID, "lista").find_element(By.XPATH, "tbody").text
+        if "Nenhum registro encontrado" in body:
+            driver.refresh()  # evitar erros da pagina do auxilio
+            time.sleep(4)
 
         driver.find_element(By.CLASS_NAME, "botao__gera_paginacao_completa").click() #exibe toda a paginação
         time.sleep(3)
@@ -106,11 +109,12 @@ class Crawler:
         tbody = driver.find_element(By.ID, "lista").find_element(By.XPATH, "tbody").get_attribute('outerHTML')
         thead = driver.find_element(By.ID, "lista").find_element(By.XPATH, "thead").get_attribute('outerHTML')\
             .replace("NIS Beneficiário", "NIS")
-        # for i in range(int(total)-1): # extrai as informações de todas as paginas
-        #     print("pagina: " + str(i + 1))
-        #     driver.find_element(By.ID, "lista_next").click()
-        #     time.sleep(5)
-        #     tbody += driver.find_element(By.ID, "lista").find_element(By.XPATH, "tbody").get_attribute('outerHTML')
+
+        if int(total) > 0:
+            for i in range(int(total)-1): # extrai as informações de todas as paginas
+                driver.find_element(By.ID, "lista_next").click()
+                time.sleep(5)
+                tbody += driver.find_element(By.ID, "lista").find_element(By.XPATH, "tbody").get_attribute('outerHTML')
 
         html += thead + tbody + "</table>"
 
