@@ -100,17 +100,19 @@ def cruzamento(request):
 def cruzar(request):
     nome = request.POST.get('nomeBeneficiario')
     nis = request.POST.get('nis')
+    combinacao = request.POST.get('combinacao')
+
     tipoCruzamento = request.POST.get('tipoCruzamento')
-    base1 = request.POST.get('base1').replace("1", "")
-    base2 = request.POST.get('base2').replace("2", "")
 
     c = Cruzamento()
 
-    if tipoCruzamento == "ambas":
-        data = c.cruzar_ae_bf_indevidos(nome=nome, nis=nis, base1=base1, base2=base2)
+    if tipoCruzamento == "bolsa":
+        if combinacao == "ambas":
+            data = c.cruzar_ae_bf_indevidos(nome=nome, nis=nis)
+        else:
+            data = c.cruzar_nao_bolsa(nome=nome, nis=nis)
     else:
-        data = c.cruzar_nao_bolsa(nome=nome, nis=nis, base1=base1, base2=base2)
+        data = c.cruzar_prefeitura(nome=nome)
 
     return render(request, 'polls/cruzamento.html',
-                  {'data': data, "nome": nome, "nis": nis, tipoCruzamento: "selected", base1+"1": "selected",
-                   base2+"2": "selected"})
+                  {'data': data, "nome": nome, "nis": nis, tipoCruzamento: "selected", combinacao: "selected"})

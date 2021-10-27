@@ -31,6 +31,9 @@ class Cruzamento:
         html = self.crawler.cruzar_auxilios(urlFinal)
         return html
 
+    def dados_prefeitura(self, nome=""):
+        return self.crawler.cruzar_prefeitura(servidor=nome)
+
     def auxilio_bolsa(self, nome="", nis=""):
         html = self.dados_auxilio_bolsa(nome=nome, nis=nis, bolsa=True)
         table_BF = pd.read_html(html)[0]
@@ -41,21 +44,41 @@ class Cruzamento:
         table_AE = table_AE.drop(columns=['Detalhar'])
         table_BF = table_BF.drop(columns=['Detalhar'])
 
-        return {"ae": table_AE, "bf": table_BF}
+        return [table_BF, table_AE]
 
-    def cruzar_ae_bf_indevidos(self, nome="", nis="", base1="bf", base2="ae"):
+    def cruzar_ae_bf_indevidos(self, nome="", nis=""):
         bases = self.auxilio_bolsa(nome=nome, nis=nis)
-        table1 = bases[base1]
-        table2 = bases[base2]
+        table_BF = bases[0]
+        table_AE = bases[1]
 
-        indevido = pd.merge(table2, table1, how='inner', on='NIS', suffixes=self.sufixos)  # recebeu ambos (BF e AE)
+        print(table_BF)
+        print(len(table_BF))
+
+        print("-------------------------------------------------------")
+
+        print(table_AE)
+        print(len(table_AE))
+
+        indevido = pd.merge(table_BF, table_AE, how='inner', on='NIS', suffixes=self.sufixos)  # recebeu ambos (BF e AE)
         return indevido.to_html()
 
     def cruzar_nao_bolsa(self, nome="", nis="", base1="bf", base2="ae"):
         bases = self.auxilio_bolsa(nome=nome, nis=nis)
-        table1 = bases[base1]
-        table2 = bases[base2]
+        table_BF = bases[0]
+        table_AE = bases[1]
 
-        devia_receber = table1.merge(table2, how='outer', on='NIS', suffixes=self.sufixos, indicator=True).loc[
+        devia_receber = table_BF.merge(table_AE, how='outer', on='NIS', suffixes=self.sufixos, indicator=True).loc[
             lambda x: x['_merge'] == 'left_only']
         return devia_receber.to_html()
+
+    def cruzar_prefeitura(self, nome="", nis=""):
+        html = self.dados_prefeitura(nome=nome)
+        table_PF = pd.read_html(html)[0]
+
+        html = self.dados_auxilio_bolsa(nome=nome, nis=nis, bolsa=False)
+        table_AE = pd.read_html(html)[0]
+        table_AE = table_AE.drop(columns=['Detalhar'])
+
+        ambos = pd.merge(table_PF, table_AE, how='inner', on='Nome', suffixes=['_PF', '_AE'])  # recebeu ambos (BF e AE)
+        return ambos.to_html()
+

@@ -81,12 +81,12 @@ class Crawler:
 
     def cruzar_auxilios(self, url):
         chrome_options = Options()
-        # if id == "table":
-        #     chrome_options.add_argument("--headless")  ## faz com que o browser não abra durante o processo
+        # chrome_options.add_argument("--headless")  ## faz com que o browser não abra durante o processo
         driver = webdriver.Chrome(executable_path='chromedriver',
                                   options=chrome_options)  ## caminho para o seu webdriver
-        print(url)
         driver.implicitly_wait(3)
+
+        print(url)
         driver.get(url)  ## carrega a página (html, js, etc.)
         time.sleep(3)
 
@@ -95,11 +95,11 @@ class Crawler:
             driver.refresh()  # evitar erros da pagina do auxilio
             time.sleep(4)
 
-        driver.find_element(By.CLASS_NAME, "botao__gera_paginacao_completa").click() #exibe toda a paginação
+        driver.find_element(By.CLASS_NAME, "botao__gera_paginacao_completa").click()  # exibe toda a paginação
         time.sleep(3)
 
         select = Select(driver.find_element(By.NAME, "lista_length"))
-        select.select_by_value('50') #seleciona a quantidade maxima de exibição
+        select.select_by_value('50')  # seleciona a quantidade maxima de exibição
 
         time.sleep(3)
         text_total = driver.find_element(By.ID, "lista_info").get_attribute('innerHTML')
@@ -107,14 +107,48 @@ class Crawler:
 
         html = "<table>"
         tbody = driver.find_element(By.ID, "lista").find_element(By.XPATH, "tbody").get_attribute('outerHTML')
-        thead = driver.find_element(By.ID, "lista").find_element(By.XPATH, "thead").get_attribute('outerHTML')\
-            .replace("NIS Beneficiário", "NIS")
+        thead = driver.find_element(By.ID, "lista").find_element(By.XPATH, "thead").get_attribute('outerHTML') \
+            .replace("NIS Beneficiário", "NIS").replace("Beneficiário", "Nome")
 
         if int(total) > 0:
-            for i in range(int(total)-1): # extrai as informações de todas as paginas
+            for i in range(int(total) - 1):  # extrai as informações de todas as paginas
                 driver.find_element(By.ID, "lista_next").click()
                 time.sleep(5)
                 tbody += driver.find_element(By.ID, "lista").find_element(By.XPATH, "tbody").get_attribute('outerHTML')
+
+        html += thead + tbody + "</table>"
+
+        return html
+
+    def cruzar_prefeitura(self, cidade="SantaCruz", servidor="", mes='4', ano='2021'):
+        if cidade != "Serra":
+            url = self.urls[
+                      cidade] + "folha-pagamentos/servidoresAtivos?ano=" + ano + "&servidor=" + servidor + "&mes=" + mes
+        else:
+            url = self.urls[cidade] + "?ano=" + ano + "&servidor=" + servidor + "&mes=" + mes
+        print(url)
+
+        chrome_options = Options()
+        # chrome_options.add_argument("--headless")  ## faz com que o browser não abra durante o processo
+        driver = webdriver.Chrome(executable_path='chromedriver',
+                                  options=chrome_options)  ## caminho para o seu webdriver
+        driver.implicitly_wait(3)
+
+        driver.get(url)
+
+        html = "<table>"
+        tbody = driver.find_element(By.ID, "table").find_element(By.XPATH, "tbody").get_attribute('outerHTML')
+        thead = driver.find_element(By.ID, "table").find_element(By.XPATH, "thead").get_attribute('outerHTML')
+
+        text_total = driver.find_element(By.CLASS_NAME, "paginator").find_element(By.TAG_NAME, "p").get_attribute('innerHTML')
+        total = text_total.split(" ")[-1]
+
+        if int(total) > 0:
+            for i in range(int(total) - 1):  # extrai as informações de todas as paginas
+                time.sleep(10)
+                driver.find_element(By.CLASS_NAME, "next").find_element(By.TAG_NAME, "a").click()
+                time.sleep(5)
+                tbody += driver.find_element(By.ID, "table").find_element(By.XPATH, "tbody").get_attribute('outerHTML')
 
         html += thead + tbody + "</table>"
 
