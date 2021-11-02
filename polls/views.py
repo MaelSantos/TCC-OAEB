@@ -111,8 +111,10 @@ def cruzar(request):
             data = c.cruzar_ae_bf_indevidos(nome=nome, nis=nis)
         else:
             data = c.cruzar_nao_bolsa(nome=nome, nis=nis)
-    else:
+    elif tipoCruzamento == "prefeitura":
         data = c.cruzar_prefeitura(nome=nome)
+    else:
+        data = c.cruzar_orgaos(nome=nome, nis=nis)
 
     return render(request, 'polls/cruzamento.html',
                   {'data': data, "nome": nome, "nis": nis, tipoCruzamento: "selected", combinacao: "selected"})

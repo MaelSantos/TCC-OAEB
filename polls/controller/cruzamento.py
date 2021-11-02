@@ -82,3 +82,15 @@ class Cruzamento:
         ambos = pd.merge(table_PF, table_AE, how='inner', on='Nome', suffixes=['_PF', '_AE'])  # recebeu ambos (BF e AE)
         return ambos.to_html()
 
+    def cruzar_orgaos(self, nome="", nis=""):
+        table_data = self.crawler.cruzar_orgaos_classe(nome=nome)
+        colunas = ["Nome", "CRM", "Data de Inscrição", "Data de Inscrição UF"]
+        table_medicos = pd.DataFrame(table_data, columns=colunas)
+        print(table_medicos)
+
+        html = self.dados_auxilio_bolsa(nome=nome, nis=nis, bolsa=False)
+        table_AE = pd.read_html(html)[0]
+        table_AE = table_AE.drop(columns=['Detalhar'])
+
+        ambos = pd.merge(table_medicos, table_AE, how='inner', on='Nome', suffixes=['_OR', '_AE'])  # recebeu ambos (BF e AE)
+        return ambos.to_html()

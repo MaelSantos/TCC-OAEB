@@ -20,14 +20,21 @@ class Crawler:
         "Serra": "http://transparencia.serratalhada.pe.gov.br/folhas-pagamentos-servidores/ativos?"
     }
 
-    def buscar(self, url, id=""):
+    def criar_crawler(self, ocultar_pagina=False):
         chrome_options = Options()
-        if id == "table":
+        if ocultar_pagina:
             chrome_options.add_argument("--headless")  ## faz com que o browser não abra durante o processo
         driver = webdriver.Chrome(executable_path='chromedriver',
                                   options=chrome_options)  ## caminho para o seu webdriver
-
         driver.implicitly_wait(3)
+        return driver
+
+    def selecionar_select(self, driver, nome, valor, tipo="id"):
+        select = Select(driver.find_element(tipo, nome))
+        select.select_by_value(valor)  # seleciona a uf PE
+
+    def buscar(self, url, id=""):
+        driver = self.criar_crawler()
         driver.get(url)  ## carrega a página (htlm, js, etc.)
         time.sleep(1)
         # tabela = driver.find_element_by_id(id)
@@ -80,11 +87,7 @@ class Crawler:
         return tabela.prettify()
 
     def cruzar_auxilios(self, url):
-        chrome_options = Options()
-        # chrome_options.add_argument("--headless")  ## faz com que o browser não abra durante o processo
-        driver = webdriver.Chrome(executable_path='chromedriver',
-                                  options=chrome_options)  ## caminho para o seu webdriver
-        driver.implicitly_wait(3)
+        driver = self.criar_crawler()
 
         print(url)
         driver.get(url)  ## carrega a página (html, js, etc.)
@@ -98,8 +101,9 @@ class Crawler:
         driver.find_element(By.CLASS_NAME, "botao__gera_paginacao_completa").click()  # exibe toda a paginação
         time.sleep(3)
 
-        select = Select(driver.find_element(By.NAME, "lista_length"))
-        select.select_by_value('50')  # seleciona a quantidade maxima de exibição
+        self.selecionar_select(driver, "lista_length", "50", By.NAME)  # seleciona a quantidade maxima de exibição
+        # select = Select(driver.find_element(By.NAME, "lista_length"))
+        # select.select_by_value('50')
 
         time.sleep(3)
         text_total = driver.find_element(By.ID, "lista_info").get_attribute('innerHTML')
@@ -128,11 +132,7 @@ class Crawler:
             url = self.urls[cidade] + "?ano=" + ano + "&servidor=" + servidor + "&mes=" + mes
         print(url)
 
-        chrome_options = Options()
-        # chrome_options.add_argument("--headless")  ## faz com que o browser não abra durante o processo
-        driver = webdriver.Chrome(executable_path='chromedriver',
-                                  options=chrome_options)  ## caminho para o seu webdriver
-        driver.implicitly_wait(3)
+        driver = self.criar_crawler()
 
         driver.get(url)
 
@@ -140,7 +140,8 @@ class Crawler:
         tbody = driver.find_element(By.ID, "table").find_element(By.XPATH, "tbody").get_attribute('outerHTML')
         thead = driver.find_element(By.ID, "table").find_element(By.XPATH, "thead").get_attribute('outerHTML')
 
-        text_total = driver.find_element(By.CLASS_NAME, "paginator").find_element(By.TAG_NAME, "p").get_attribute('innerHTML')
+        text_total = driver.find_element(By.CLASS_NAME, "paginator").find_element(By.TAG_NAME, "p").get_attribute(
+            'innerHTML')
         total = text_total.split(" ")[-1]
 
         if int(total) > 0:
@@ -153,3 +154,42 @@ class Crawler:
         html += thead + tbody + "</table>"
 
         return html
+
+    def cruzar_orgaos_classe(self, nome=""):
+        url = "https://portal.cfm.org.br/busca-medicos/"
+        driver = self.criar_crawler()
+        driver.get(url)
+
+        if nome != "":
+            elemento_nome = driver.find_element(By.NAME, "nome")
+            elemento_nome.clear()
+            elemento_nome.send_keys(nome)
+        self.selecionar_select(driver, "uf", "PE", By.ID)  # seleciona UF
+        self.selecionar_select(driver, "municipio", "5421", By.ID)  # seleciona municipio
+        driver.find_element(By.CLASS_NAME, "button").click()  # aceita cookies
+        driver.find_element(By.CLASS_NAME, "btnPesquisar").click()  # busca informações
+        time.sleep(5)
+
+        try:
+            total = driver.find_element(By.CLASS_NAME, "paginationjs-last").text
+        except:
+            total = 0
+
+        medicos = []
+        for i in range(10):
+            try:
+                for j in range(10):
+                    campo_medico = driver.find_element(By.CLASS_NAME, f"resultMedico_{j}").find_element(By.CLASS_NAME, "card-body")
+                    nome = campo_medico.find_element(By.TAG_NAME, "h4").text.upper()
+                    campos = campo_medico.find_element(By.CLASS_NAME, "row").find_elements(By.CLASS_NAME, "col-md-4")
+                    crm = campos[0].text.split(" ")[-1]
+                    data_inscricao = campos[1].text.split(" ")[-1]
+                    data_uf = campos[2].text.split(" ")[-1]
+                    medicos.append([nome, crm, data_inscricao, data_uf])
+            except:
+                break
+            if total != 0:
+                driver.find_element(By.XPATH, f"//li[@data-num='{(i + 2)}']").click()
+                time.sleep(3)
+
+        return medicos
