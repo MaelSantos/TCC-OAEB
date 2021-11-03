@@ -101,20 +101,21 @@ def cruzar(request):
     nome = request.POST.get('nomeBeneficiario')
     nis = request.POST.get('nis')
     combinacao = request.POST.get('combinacao')
+    municipio = request.POST.get('municipio')
 
-    tipoCruzamento = request.POST.get('tipoCruzamento')
+    bases = request.POST.get('basesSelecionadas').split(",")
+    base1 = bases[0]
+    base2 = bases[1]
+    sufixos = ["_"+base1[0:2].upper(), "_"+base2[0:2].upper()]
+    if base1 == "auxilio" and base2 == "bolsa":
+        chave = "NIS"
+    else:
+        chave = "Nome"
 
     c = Cruzamento()
-
-    if tipoCruzamento == "bolsa":
-        if combinacao == "ambas":
-            data = c.cruzar_ae_bf_indevidos(nome=nome, nis=nis)
-        else:
-            data = c.cruzar_nao_bolsa(nome=nome, nis=nis)
-    elif tipoCruzamento == "prefeitura":
-        data = c.cruzar_prefeitura(nome=nome)
-    else:
-        data = c.cruzar_orgaos(nome=nome, nis=nis)
+    tableA = c.buscar_bases(base1, nome=nome, nis=nis, cidade=municipio)
+    tableB = c.buscar_bases(base2, nome=nome, nis=nis, cidade=municipio)
+    data = c.cruzar_ambas(tableA, tableB, chave, sufixos)
 
     return render(request, 'polls/cruzamento.html',
-                  {'data': data, "nome": nome, "nis": nis, tipoCruzamento: "selected", combinacao: "selected"})
+                  {'data': data, "nome": nome, "nis": nis, combinacao: "selected", municipio: "selected"})

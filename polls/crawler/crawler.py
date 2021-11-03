@@ -11,13 +11,13 @@ class Crawler:
     url_padrao = "folha-pagamentos/servidoresAtivos?"
 
     urls = {
-        "Triunfo": "https://triunfo.pe.gov.br/transparencia/",
+        "TRIUNFO": "https://triunfo.pe.gov.br/transparencia/",
         "Calumbi": "https://calumbi.pe.gov.br/transparencia/",
         "Floresta": "https://floresta.pe.gov.br/transparencia/",
         "Mirandiba": "https://mirandiba.pe.gov.br/portal-transparencia/",
-        "SantaCruz": "https://www.santacruzdabaixaverde.pe.gov.br/transparencia/",
+        "SANTA+CRUZ+DA+BAIXA+VERDE": "https://www.santacruzdabaixaverde.pe.gov.br/transparencia/",
         "Betania": "https://betania.pe.gov.br/folha-de-pagamento/",
-        "Serra": "http://transparencia.serratalhada.pe.gov.br/folhas-pagamentos-servidores/ativos?"
+        "SERRA+TALHADA": "http://transparencia.serratalhada.pe.gov.br/folhas-pagamentos-servidores/ativos?"
     }
 
     def criar_crawler(self, ocultar_pagina=False):
@@ -124,8 +124,8 @@ class Crawler:
 
         return html
 
-    def cruzar_prefeitura(self, cidade="SantaCruz", servidor="", mes='4', ano='2021'):
-        if cidade != "Serra":
+    def cruzar_prefeitura(self, cidade="SANTA+CRUZ+DA+BAIXA+VERDE", servidor="", mes='4', ano='2021'):
+        if cidade != "SERRA+TALHADA":
             url = self.urls[
                       cidade] + "folha-pagamentos/servidoresAtivos?ano=" + ano + "&servidor=" + servidor + "&mes=" + mes
         else:

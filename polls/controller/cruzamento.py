@@ -13,14 +13,12 @@ class Cruzamento:
 
     crawler = Crawler()
 
-    def dados_auxilio_bolsa(self, cidade="SANTA CRUZ DA BAIXA VERDE", nome="", nis="", bolsa=True):
+    def buscar_auxilio_bolsa(self, cidade="SANTA CRUZ DA BAIXA VERDE", nome="", nis="", bolsa=True):
         de = "&de=01%2F01%2F2020"
         ate = "&ate=31%2F12%2F2020"
         estado = "&uf=PE&nomeMunicipio=" + cidade.replace(" ", "+")
-
         if nis != "":
             nis = "&cpfNisBeneficiario=" + nis
-
         if nome != "":
             nome = "&nomeBeneficiario=" + nome.replace(" ", "+")
 
@@ -29,68 +27,41 @@ class Cruzamento:
         else:
             urlFinal = self.url_auxilio + de + ate + estado + nis + nome
         html = self.crawler.cruzar_auxilios(urlFinal)
-        return html
 
-    def dados_prefeitura(self, nome=""):
-        return self.crawler.cruzar_prefeitura(servidor=nome)
+        table = pd.read_html(html)[0]
+        table = table.drop(columns=['Detalhar'])
+        return table
 
-    def auxilio_bolsa(self, nome="", nis=""):
-        html = self.dados_auxilio_bolsa(nome=nome, nis=nis, bolsa=True)
-        table_BF = pd.read_html(html)[0]
-
-        html = self.dados_auxilio_bolsa(nome=nome, nis=nis, bolsa=False)
-        table_AE = pd.read_html(html)[0]
-
-        table_AE = table_AE.drop(columns=['Detalhar'])
-        table_BF = table_BF.drop(columns=['Detalhar'])
-
-        return [table_BF, table_AE]
-
-    def cruzar_ae_bf_indevidos(self, nome="", nis=""):
-        bases = self.auxilio_bolsa(nome=nome, nis=nis)
-        table_BF = bases[0]
-        table_AE = bases[1]
-
-        print(table_BF)
-        print(len(table_BF))
-
-        print("-------------------------------------------------------")
-
-        print(table_AE)
-        print(len(table_AE))
-
-        indevido = pd.merge(table_BF, table_AE, how='inner', on='NIS', suffixes=self.sufixos)  # recebeu ambos (BF e AE)
-        return indevido.to_html()
-
-    def cruzar_nao_bolsa(self, nome="", nis="", base1="bf", base2="ae"):
-        bases = self.auxilio_bolsa(nome=nome, nis=nis)
-        table_BF = bases[0]
-        table_AE = bases[1]
-
-        devia_receber = table_BF.merge(table_AE, how='outer', on='NIS', suffixes=self.sufixos, indicator=True).loc[
-            lambda x: x['_merge'] == 'left_only']
-        return devia_receber.to_html()
-
-    def cruzar_prefeitura(self, nome="", nis=""):
-        html = self.dados_prefeitura(nome=nome)
+    def buscar_prefeitura(self, nome="", cidade=""):
+        html = self.crawler.cruzar_prefeitura(servidor=nome, cidade=cidade)
         table_PF = pd.read_html(html)[0]
+        return table_PF
 
-        html = self.dados_auxilio_bolsa(nome=nome, nis=nis, bolsa=False)
-        table_AE = pd.read_html(html)[0]
-        table_AE = table_AE.drop(columns=['Detalhar'])
-
-        ambos = pd.merge(table_PF, table_AE, how='inner', on='Nome', suffixes=['_PF', '_AE'])  # recebeu ambos (BF e AE)
-        return ambos.to_html()
-
-    def cruzar_orgaos(self, nome="", nis=""):
+    def buscar_orgaos(self, nome="", nis=""):
         table_data = self.crawler.cruzar_orgaos_classe(nome=nome)
         colunas = ["Nome", "CRM", "Data de Inscrição", "Data de Inscrição UF"]
         table_medicos = pd.DataFrame(table_data, columns=colunas)
-        print(table_medicos)
+        return table_medicos
 
-        html = self.dados_auxilio_bolsa(nome=nome, nis=nis, bolsa=False)
-        table_AE = pd.read_html(html)[0]
-        table_AE = table_AE.drop(columns=['Detalhar'])
+    def buscar_bases(self, base, nome="", nis="", cidade=""):
+        cidade = cidade.replace("_", "+")
+        if base == "auxilio":
+            table = self.buscar_auxilio_bolsa(cidade=cidade, nome=nome, nis=nis, bolsa=False)
+        elif base == "bolsa":
+            table = self.buscar_auxilio_bolsa(cidade=cidade, nome=nome, nis=nis)
+        elif base == "orgao":
+            table = self.buscar_orgaos(nome=nome)
+        elif base == "prefeitura":
+            table = self.buscar_prefeitura(nome=nome, cidade=cidade)
+        return table
 
-        ambos = pd.merge(table_medicos, table_AE, how='inner', on='Nome', suffixes=['_OR', '_AE'])  # recebeu ambos (BF e AE)
+    def cruzar_ambas(self, tableA, tableB, chave, sufixos=['A', 'B']):
+        ambos = pd.merge(tableA, tableB, how='inner', on=chave, suffixes=sufixos)  # contém em ambas as bases
+        ambos = ambos.sort_values(chave)
+        ambos = ambos.drop_duplicates(subset=chave, keep='first')
         return ambos.to_html()
+
+    def cruzar_diferenca(self, tableA, tableB, chave, sufixos=['A', 'B']):
+        diferenca = tableA.merge(tableB, how='outer', on=chave, suffixes=sufixos, indicator=True).loc[
+            lambda x: x['_merge'] == 'left_only']
+        return diferenca.to_html()

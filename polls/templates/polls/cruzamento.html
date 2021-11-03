@@ -4,6 +4,9 @@
 {% block links %}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.css" xmlns:>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.js"></script>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta2/dist/css/bootstrap-select.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta2/dist/js/bootstrap-select.min.js"></script>
 {% endblock %}
 
 {% block titulo %}Web Crawling{% endblock %}
@@ -16,16 +19,28 @@
         {% csrf_token %}
 
         <div class="form-group mb-3">
-            <label for="tipoCruzamento">Tipo de Cruzamento:</label>
-            <select class="form-select" name="tipoCruzamento" id="tipoCruzamento">
-                <option value="bolsa" {{ bolsa }}>Auxílio Emergencial vs Bolsa Família</option>
-                <option value="prefeitura" {{ prefeitura }}>Auxílio Emergencial vs Prefeitura</option>
-                <option value="orgao" {{ orgao }}>Auxílio Emergencial vs Orgão de Classe</option>
+            <label for="bases">Bases de Dados:</label>
+            <select class="select" id="bases" name="bases" onchange="regraBases(this)" multiple required>
+                <option value="auxilio">Auxílio Emergencial</option>
+                <option value="bolsa">Bolsa Família</option>
+                <option value="orgao">Orgão de Classe</option>
+                <option value="prefeitura">Prefeitura</option>
+            </select>
+        </div>
+
+        <input type="hidden" name="basesSelecionadas" id="basesSelecionadas" value="{{ bases }}" required>
+
+        <div class="form-group mb-3">
+            <label for="municipio">Município:</label>
+            <select class="form-select" name="municipio" id="municipio" required>
+                <option value="SANTA_CRUZ_DA_BAIXA_VERDE" {{ SANTA_CRUZ_DA_BAIXA_VERDE }}>Santa Cruz da Baixa Verde</option>
+                <option value="SERRA_TALHADA" {{ SERRA_TALHADA }}>Serra Talhada</option>
+                <option value="TRIUNFO" {{ TRIUNFO }}>Triunfo</option>
             </select>
         </div>
 
         <div class="form-group mb-3">
-            <label for="tipoCruzamento">Tipo de Cruzamento:</label>
+            <label for="combinacao">Tipo de Cruzamento:</label>
             <select class="form-select" name="combinacao" id="combinacao">
                 <option value="ambas" {{ ambas }}>Contém em Ambos</option>
                 <option value="primeira" {{ primeira }}>Está presente somente na 1ª</option>
@@ -42,8 +57,11 @@
         </div>
 
         <button type="submit" id="buscar" class="btn btn-primary">Iniciar Cruzamento<i class="ui search icon"></i></button>
-
     </form>
+
+    <div class="alert alert-danger mt-3" role="alert" id="alerta">
+        Escolha no máximos duas bases de dados
+    </div>
 
 {% endblock %}
 
