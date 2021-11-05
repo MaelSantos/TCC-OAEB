@@ -20,6 +20,16 @@ class Crawler:
         "SERRA+TALHADA": "http://transparencia.serratalhada.pe.gov.br/folhas-pagamentos-servidores/ativos?"
     }
 
+    codigos = {
+        "TRIUNFO": "5483",
+        "Calumbi": "",
+        "Floresta": "",
+        "Mirandiba": "",
+        "SANTA+CRUZ+DA+BAIXA+VERDE": "5421",
+        "Betania": "",
+        "SERRA+TALHADA": "5453"
+    }
+
     def criar_crawler(self, ocultar_pagina=False):
         chrome_options = Options()
         if ocultar_pagina:
@@ -44,7 +54,7 @@ class Crawler:
 
         return html
 
-    def crawler_prefeitura(self, cidade, servidor, mes='4', ano='2021'):
+    def crawler_prefeitura(self, cidade, servidor, mes='4', ano='2020'):
 
         if cidade != "Serra":
             url = self.urls[
@@ -112,7 +122,7 @@ class Crawler:
         html = "<table>"
         tbody = driver.find_element(By.ID, "lista").find_element(By.XPATH, "tbody").get_attribute('outerHTML')
         thead = driver.find_element(By.ID, "lista").find_element(By.XPATH, "thead").get_attribute('outerHTML') \
-            .replace("NIS Beneficiário", "NIS").replace("Beneficiário", "Nome")
+            .replace("NIS Beneficiário", "NIS").replace("Beneficiário", "Nome").replace("BENEFICIÁRIO", "Nome")
 
         if int(total) > 0:
             for i in range(int(total) - 1):  # extrai as informações de todas as paginas
@@ -124,7 +134,7 @@ class Crawler:
 
         return html
 
-    def cruzar_prefeitura(self, cidade="SANTA+CRUZ+DA+BAIXA+VERDE", servidor="", mes='4', ano='2021'):
+    def cruzar_prefeitura(self, cidade="SANTA+CRUZ+DA+BAIXA+VERDE", servidor="", mes='4', ano='2020'):
         if cidade != "SERRA+TALHADA":
             url = self.urls[
                       cidade] + "folha-pagamentos/servidoresAtivos?ano=" + ano + "&servidor=" + servidor + "&mes=" + mes
@@ -135,7 +145,7 @@ class Crawler:
         driver = self.criar_crawler()
 
         driver.get(url)
-
+        time.sleep(3)
         html = "<table>"
         tbody = driver.find_element(By.ID, "table").find_element(By.XPATH, "tbody").get_attribute('outerHTML')
         thead = driver.find_element(By.ID, "table").find_element(By.XPATH, "thead").get_attribute('outerHTML')
@@ -155,7 +165,7 @@ class Crawler:
 
         return html
 
-    def cruzar_orgaos_classe(self, nome=""):
+    def cruzar_orgaos_classe(self, nome="", cidade="SANTA+CRUZ+DA+BAIXA+VERDE"):
         url = "https://portal.cfm.org.br/busca-medicos/"
         driver = self.criar_crawler()
         driver.get(url)
@@ -165,7 +175,7 @@ class Crawler:
             elemento_nome.clear()
             elemento_nome.send_keys(nome)
         self.selecionar_select(driver, "uf", "PE", By.ID)  # seleciona UF
-        self.selecionar_select(driver, "municipio", "5421", By.ID)  # seleciona municipio
+        self.selecionar_select(driver, "municipio", self.codigos[cidade], By.ID)  # seleciona municipio
         driver.find_element(By.CLASS_NAME, "button").click()  # aceita cookies
         driver.find_element(By.CLASS_NAME, "btnPesquisar").click()  # busca informações
         time.sleep(5)

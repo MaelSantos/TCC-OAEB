@@ -100,22 +100,30 @@ def cruzamento(request):
 def cruzar(request):
     nome = request.POST.get('nomeBeneficiario')
     nis = request.POST.get('nis')
-    combinacao = request.POST.get('combinacao')
+    tipoCruzamento = request.POST.get('tipoCruzamento')
     municipio = request.POST.get('municipio')
 
     bases = request.POST.get('basesSelecionadas').split(",")
     base1 = bases[0]
-    base2 = bases[1]
-    sufixos = ["_"+base1[0:2].upper(), "_"+base2[0:2].upper()]
-    if base1 == "auxilio" and base2 == "bolsa":
-        chave = "NIS"
-    else:
-        chave = "Nome"
 
     c = Cruzamento()
     tableA = c.buscar_bases(base1, nome=nome, nis=nis, cidade=municipio)
-    tableB = c.buscar_bases(base2, nome=nome, nis=nis, cidade=municipio)
-    data = c.cruzar_ambas(tableA, tableB, chave, sufixos)
+
+    if len(bases) > 1:
+        base2 = bases[1]
+        sufixos = ["_"+base1[0:2].upper(), "_"+base2[0:2].upper()]
+        if base1 == "auxilio" and base2 == "bolsa":
+            chave = "NIS"
+        else:
+            chave = "Nome"
+
+        tableB = c.buscar_bases(base2, nome=nome, nis=nis, cidade=municipio)
+        if tipoCruzamento == "intersecao":
+            data = c.cruzar_ambas(tableA, tableB, chave, sufixos)
+        else:
+            data = c.cruzar_diferenca(tableA, tableB, chave, sufixos)
+    else:
+        data = tableA.to_html()
 
     return render(request, 'polls/cruzamento.html',
-                  {'data': data, "nome": nome, "nis": nis, combinacao: "selected", municipio: "selected"})
+                  {'data': data, "nome": nome, "nis": nis, tipoCruzamento: "selected", municipio: "selected"})
