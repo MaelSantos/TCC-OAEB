@@ -12,4 +12,6 @@ urlpatterns = [
     path('cruzamento/auxilios/', views.cruzamento, name='cruzamento_auxilios'),
     path('cruzamento/auxilios/busca/', views.cruzar, name='cruzar_auxilios'),
 
+    path('cruzamento/salvar/pdf/', views.gerar_pdf, name='salvar_pdf'),
+
 ]

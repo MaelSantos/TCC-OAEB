@@ -61,7 +61,8 @@ class Cruzamento:
         return ambos.to_html()
 
     def cruzar_diferenca(self, tableA, tableB, chave, sufixos=['A', 'B']):
+        # tableB = tableB.drop(columns=['UF', 'CPF'])
         diferenca = tableA.merge(tableB, how='outer', on=chave, suffixes=sufixos, indicator=True).loc[lambda x: x['_merge'] == 'left_only']
-        tableB = tableB.drop(columns=["Nome"])
-        diferenca = diferenca.drop(columns=tableB.columns)
+        # tableB = tableB.drop(columns=['Nome'])
+        # diferenca = diferenca.drop(columns=tableB.columns)
         return diferenca.to_html()

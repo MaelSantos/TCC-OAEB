@@ -20,17 +20,41 @@
     <form method="POST" class="form-signin" action="/polls/cruzamento/auxilios/busca/">
         {% csrf_token %}
 
-        <div class="form-group mb-3">
-            <label for="bases">Bases de Dados:</label>
-            <select class="select" id="bases" name="bases" onchange="regraBases(this)" multiple required>
-                <option value="auxilio">Auxílio Emergencial</option>
-                <option value="bolsa">Bolsa Família</option>
-                <option value="orgao">Orgãos de Classe</option>
-                <option value="prefeitura">Prefeitura</option>
-            </select>
+<!--        <div class="form-group mb-3">-->
+<!--            <label for="bases">Bases de Dados:</label>-->
+<!--            <select class="select" id="bases" name="bases" onchange="regraBases(this)" multiple required>-->
+<!--                <option value="auxilio">Auxílio Emergencial</option>-->
+<!--                <option value="bolsa">Bolsa Família</option>-->
+<!--                <option value="orgao">Orgãos de Classe</option>-->
+<!--                <option value="prefeitura">Prefeitura</option>-->
+<!--            </select>-->
+<!--        </div>-->
+
+        <div class="d-flex">
+            <div class="form-group mb-3">
+                <label for="base1">Bases Principal:</label>
+                <select class="form-select" id="base1" name="base1" onchange="regraBases()" required>
+                    <option value=""></option>
+                    <option value="auxilio" {{ auxilio }}>Auxílio Emergencial</option>
+                    <option value="bolsa" {{ bolsa }}>Bolsa Família</option>
+                    <option value="orgao" {{ orgao }}>Orgãos de Classe</option>
+                    <option value="prefeitura" {{ prefeitura }}>Prefeitura</option>
+                </select>
+            </div>
+
+            <div class="form-group mb-3">
+                <label for="base2">Bases Secundária:</label>
+                <select class="form-select" id="base2" name="base2" onchange="regraBases()">
+                    <option value=""></option>
+                    <option value="auxilio" {{ auxilio2 }}>Auxílio Emergencial</option>
+                    <option value="bolsa" {{ bolsa2 }}>Bolsa Família</option>
+                    <option value="orgao" {{ orgao2 }}>Orgãos de Classe</option>
+                    <option value="prefeitura" {{ prefeitura2 }}>Prefeitura</option>
+                </select>
+            </div>
         </div>
 
-        <input type="hidden" name="basesSelecionadas" id="basesSelecionadas" value="{{ bases }}" required>
+<!--        <input type="hidden" name="basesSelecionadas" id="basesSelecionadas" value="{{ bases }}" required>-->
 
         <div class="form-group mb-3">
             <label for="municipio">Município:</label>
@@ -38,6 +62,10 @@
                 <option value="SANTA_CRUZ_DA_BAIXA_VERDE" {{ SANTA_CRUZ_DA_BAIXA_VERDE }}>Santa Cruz da Baixa Verde</option>
                 <option value="SERRA_TALHADA" {{ SERRA_TALHADA }}>Serra Talhada</option>
                 <option value="TRIUNFO" {{ TRIUNFO }}>Triunfo</option>
+                <option value="CALUMBI" {{ CALUMBI }}> Calumbi</option>
+                <option value="FLORESTA" {{ FLORESTA }}>Floresta</option>
+                <option value="MIRANDIBA" {{ MIRANDIBA }}>Mirandiba</option>
+                <option value="SAO_JOSE_DO_BELMONTE" {{ SAO_JOSE_DO_BELMONTE }}>São José do Belmonte</option>
             </select>
         </div>
 
@@ -48,7 +76,7 @@
                     <option value="intersecao" {{ intersecao }}>Interseção</option>
                     <option value="diferenca" {{ diferenca }}>Diferença</option>
                 </select>
-                <button type="button" id="info" class="btn" data-bs-toggle="popover" data-bs-title="Tipo de Cruzamento" data-bs-content="sdfasd" onclick="exibirPopover(this)" onblur="ocultarCampo(this)" ><i class="fas fa-exclamation-circle"></i></button>
+                <button type="button" id="info" class="btn" data-bs-toggle="popover" data-bs-title="Tipo de Cruzamento" data-bs-content=" " onclick="exibirPopover(this)" onblur="ocultarCampo(this)" ><i class="fas fa-exclamation-circle"></i></button>
             </div>
         </div>
 
@@ -61,18 +89,19 @@
             <input type="text" class="form-control" id="nis" name="nis" value="{{ nis }}" placeholder="Número do NIS">
         </div>
 
-        <button type="submit" id="buscar" class="btn btn-primary">Iniciar Cruzamento<i class="ui search icon"></i></button>
+        <button type="submit" id="buscar" class="btn btn-primary">Iniciar Cruzamento</button>
     </form>
 
     <div class="alert alert-danger mt-3" role="alert" id="alerta">
-        Escolha no máximos duas bases de dados
+        As bases de dados não podem ser iguais!
     </div>
 
 {% endblock %}
 
 {% block optional %}
     {% if data != None and data != "" %}
-        <div class="d-flex justify-content-center justify-content-lg-between p-4 border-bottom">
+        <button type="button" id="salvar" class="btn btn-primary" onclick="salvarPdf()">Salvar PDF</button>
+        <div class="d-flex justify-content-center justify-content-lg-between p-4 border-bottom" id="tabelaDados">
             {{ data | safe }}
         </div>
     {% endif %}

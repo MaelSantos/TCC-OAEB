@@ -11,23 +11,24 @@ class Crawler:
     url_padrao = "folha-pagamentos/servidoresAtivos?"
 
     urls = {
-        "TRIUNFO": "https://triunfo.pe.gov.br/transparencia/",
-        "Calumbi": "https://calumbi.pe.gov.br/transparencia/",
-        "Floresta": "https://floresta.pe.gov.br/transparencia/",
-        "Mirandiba": "https://mirandiba.pe.gov.br/portal-transparencia/",
-        "SANTA+CRUZ+DA+BAIXA+VERDE": "https://www.santacruzdabaixaverde.pe.gov.br/transparencia/",
-        "Betania": "https://betania.pe.gov.br/folha-de-pagamento/",
-        "SERRA+TALHADA": "http://transparencia.serratalhada.pe.gov.br/folhas-pagamentos-servidores/ativos?"
+        "TRIUNFO": "https://triunfo.pe.gov.br/transparencia/folha-pagamentos/servidoresAtivos",
+        "CALUMBI": "https://calumbi.pe.gov.br/transparencia/folha-pagamentos/servidoresAtivos",
+        "FLORESTA": "https://floresta.pe.gov.br/transparencia/folha-pagamentos/servidoresAtivos",
+        "MIRANDIBA": "https://mirandiba.pe.gov.br/portal-transparencia/folha-pagamentos/servidoresAtivos",
+        "SANTA+CRUZ+DA+BAIXA+VERDE": "https://santacruzdabaixaverde.pe.gov.br/transparencia/folha-pagamentos/servidoresAtivos",
+        # "BETANIA": "https://betania.pe.gov.br/folha-de-pagamento/",
+        "SERRA+TALHADA": "http://transparencia.serratalhada.pe.gov.br/FolhasPagamentosServidores/ativos?",
+        "SAO+JOSE+DO+BELMONTE": "https://saojosedobelmonte.pe.gov.br/portal-transparencia/folha-pagamentos/servidoresAtivos"
     }
 
     codigos = {
         "TRIUNFO": "5483",
-        "Calumbi": "",
-        "Floresta": "",
-        "Mirandiba": "",
+        "CALUMBI": "5197",
+        "FLORESTA": "5255",
+        "MIRANDIBA": "5345",
         "SANTA+CRUZ+DA+BAIXA+VERDE": "5421",
-        "Betania": "",
-        "SERRA+TALHADA": "5453"
+        "SERRA+TALHADA": "5453",
+        "SAO+JOSE+DO+BELMONTE": "5442"
     }
 
     def criar_crawler(self, ocultar_pagina=False):
@@ -56,11 +57,7 @@ class Crawler:
 
     def crawler_prefeitura(self, cidade, servidor, mes='4', ano='2020'):
 
-        if cidade != "Serra":
-            url = self.urls[
-                      cidade] + "folha-pagamentos/servidoresAtivos?ano=" + ano + "&servidor=" + servidor + "&mes=" + mes
-        else:
-            url = self.urls[cidade] + "?ano=" + ano + "&servidor=" + servidor + "&mes=" + mes
+        url = self.urls[cidade] + "?ano=" + ano + "&servidor=" + servidor.upper() + "&mes=" + mes
         print(url)
 
         html = self.buscar(url, "table")
@@ -122,24 +119,22 @@ class Crawler:
         html = "<table>"
         tbody = driver.find_element(By.ID, "lista").find_element(By.XPATH, "tbody").get_attribute('outerHTML')
         thead = driver.find_element(By.ID, "lista").find_element(By.XPATH, "thead").get_attribute('outerHTML') \
-            .replace("NIS Beneficiário", "NIS").replace("Beneficiário", "Nome").replace("BENEFICIÁRIO", "Nome")
+            .replace("NIS Beneficiário", "NIS").replace("CPF Beneficiário", "CPF").replace("Beneficiário", "Nome").replace("BENEFICIÁRIO", "Nome")
 
         if int(total) > 0:
             for i in range(int(total) - 1):  # extrai as informações de todas as paginas
                 driver.find_element(By.ID, "lista_next").click()
                 time.sleep(5)
                 tbody += driver.find_element(By.ID, "lista").find_element(By.XPATH, "tbody").get_attribute('outerHTML')
+                print(i)
 
         html += thead + tbody + "</table>"
 
         return html
 
     def cruzar_prefeitura(self, cidade="SANTA+CRUZ+DA+BAIXA+VERDE", servidor="", mes='4', ano='2020'):
-        if cidade != "SERRA+TALHADA":
-            url = self.urls[
-                      cidade] + "folha-pagamentos/servidoresAtivos?ano=" + ano + "&servidor=" + servidor + "&mes=" + mes
-        else:
-            url = self.urls[cidade] + "?ano=" + ano + "&servidor=" + servidor + "&mes=" + mes
+
+        url = self.urls[cidade] + "/?ano=" + ano + "&servidor=" + servidor + "&mes=" + mes
         print(url)
 
         driver = self.criar_crawler()
@@ -181,12 +176,13 @@ class Crawler:
         time.sleep(5)
 
         try:
-            total = driver.find_element(By.CLASS_NAME, "paginationjs-last").text
+            # total = driver.find_element(By.CLASS_NAME, "paginationjs-last").text
+            total = driver.find_elements(By.CLASS_NAME, "J-paginationjs-page")[-1].text
         except:
-            total = 0
+            total = 1
 
         medicos = []
-        for i in range(10):
+        for i in range(int(total)):
             try:
                 for j in range(10):
                     campo_medico = driver.find_element(By.CLASS_NAME, f"resultMedico_{j}").find_element(By.CLASS_NAME, "card-body")

@@ -1,8 +1,8 @@
-from builtins import type
-
+from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+from weasyprint import HTML
 
 from .crawler.crawler import Crawler
 from .models import BeneficiarioAuxilio, BeneficiarioBolsaFamilia
@@ -103,15 +103,14 @@ def cruzar(request):
     tipoCruzamento = request.POST.get('tipoCruzamento')
     municipio = request.POST.get('municipio')
 
-    bases = request.POST.get('basesSelecionadas').split(",")
-    base1 = bases[0]
+    base1 = request.POST.get('base1')
+    base2 = request.POST.get('base2')
 
     c = Cruzamento()
     tableA = c.buscar_bases(base1, nome=nome, nis=nis, cidade=municipio)
 
-    if len(bases) > 1:
-        base2 = bases[1]
-        sufixos = ["_"+base1[0:2].upper(), "_"+base2[0:2].upper()]
+    if base2 != "":
+        sufixos = ["_" + base1[0:2].upper(), "_" + base2[0:2].upper()]
         if base1 == "auxilio" and base2 == "bolsa":
             chave = "NIS"
         else:
@@ -126,4 +125,14 @@ def cruzar(request):
         data = tableA.to_html()
 
     return render(request, 'polls/cruzamento.html',
-                  {'data': data, "nome": nome, "nis": nis, tipoCruzamento: "selected", municipio: "selected"})
+                  {'data': data, "nome": nome, "nis": nis, tipoCruzamento: "selected", municipio: "selected",
+                   base1: "selected", base2 + "2": "selected"})
+
+
+def gerar_pdf(request):
+    htmlstring = request.POST.get('htmlstring')
+    print(htmlstring)
+    html = HTML(string=htmlstring)
+    main_doc = html.render()
+    pdf = main_doc.write_pdf()
+    return HttpResponse(pdf, content_type='application/pdf')
