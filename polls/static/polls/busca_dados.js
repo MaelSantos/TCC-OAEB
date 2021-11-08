@@ -1,31 +1,30 @@
 
-$("#buscar").hide()
-exibirCidades()
+$("#buscar").hide();
+exibirCidades();
 
 if($("#lista") != undefined){
-    $("#lista").show()
-    $("#lista").addClass("table table-hover")
-    $("#lista").css("width", "100%")
+    $("#lista").show();
+    $("#lista").addClass("table table-hover");
+    $("#lista").css("width", "100%");
 }
 
 function verificarCampos(){
-    $("#buscar").click()
+    $("#buscar").click();
 }
 
 function exibirCidades(){
 
     tipoBusca = $("#tipoBusca").val()
-    console.log(tipoBusca)
 
     if(tipoBusca == "prefeitura"){
-        $("#divCidades").show()
-        $("#divMes").show()
-        $("#divPeriodo").hide()
+        $("#divCidades").show();
+        $("#divMes").show();
+        $("#divPeriodo").hide();
     }
     else{
-        $("#divCidades").hide()
-        $("#divMes").hide()
-        $("#divPeriodo").show()
+        $("#divCidades").hide();
+        $("#divMes").hide();
+        $("#divPeriodo").show();
     }
 
 }

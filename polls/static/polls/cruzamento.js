@@ -5,9 +5,8 @@ if($(".dataframe") != undefined){
     $("tr").css("text-align", "");
 }
 
-$('#bases').selectpicker();
-$('#bases').css("width", "100%")
-$('#alerta').hide()
+$('#alerta').hide();
+$('#alerta').hide();
 
 function regraBases(){
     base1 = $( "#base1 option:selected" ).text();
@@ -46,7 +45,6 @@ function ocultarCampo(id){
 }
 
 function salvarPdf(){
-
     html = $("#tabelaDados").html();
 
     $.ajax({
@@ -61,9 +59,30 @@ function salvarPdf(){
         }
 
     });
+}
+
+function regraPeriodo(id){
+    radio = $(id).val();
+    div = $('#divPeriodo');
+    console.log(radio);
+
+    if(radio == "informar_periodo"){
+        div.show();
+    }
+    else{
+        div.hide();
+        $("#de").val("");
+        $("#ate").val("");
+    }
 
 }
 
 $(document).ready(function(){
     $('[data-bs-toggle="popover"]').popover();
+
+    if($('input[name="tipo_periodo"]:checked') != undefined){
+        $("#todo_periodo").attr('checked', true);
+        $('#divPeriodo').hide();
+    } else
+        $('#divPeriodo').show();
 });

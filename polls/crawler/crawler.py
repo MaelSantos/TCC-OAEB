@@ -11,14 +11,14 @@ class Crawler:
     url_padrao = "folha-pagamentos/servidoresAtivos?"
 
     urls = {
-        "TRIUNFO": "https://triunfo.pe.gov.br/transparencia/folha-pagamentos/servidoresAtivos",
-        "CALUMBI": "https://calumbi.pe.gov.br/transparencia/folha-pagamentos/servidoresAtivos",
-        "FLORESTA": "https://floresta.pe.gov.br/transparencia/folha-pagamentos/servidoresAtivos",
-        "MIRANDIBA": "https://mirandiba.pe.gov.br/portal-transparencia/folha-pagamentos/servidoresAtivos",
-        "SANTA+CRUZ+DA+BAIXA+VERDE": "https://santacruzdabaixaverde.pe.gov.br/transparencia/folha-pagamentos/servidoresAtivos",
+        "TRIUNFO": "https://triunfo.pe.gov.br/transparencia/folha-pagamentos/servidoresAtivos/",
+        "CALUMBI": "https://calumbi.pe.gov.br/transparencia/folha-pagamentos/servidoresAtivos/",
+        "FLORESTA": "https://floresta.pe.gov.br/transparencia/folha-pagamentos/servidoresAtivos/",
+        "MIRANDIBA": "https://mirandiba.pe.gov.br/portal-transparencia/folha-pagamentos/servidoresAtivos/",
+        "SANTA+CRUZ+DA+BAIXA+VERDE": "https://santacruzdabaixaverde.pe.gov.br/transparencia/folha-pagamentos/servidoresAtivos/",
         # "BETANIA": "https://betania.pe.gov.br/folha-de-pagamento/",
-        "SERRA+TALHADA": "http://transparencia.serratalhada.pe.gov.br/FolhasPagamentosServidores/ativos?",
-        "SAO+JOSE+DO+BELMONTE": "https://saojosedobelmonte.pe.gov.br/portal-transparencia/folha-pagamentos/servidoresAtivos"
+        "SERRA+TALHADA": "http://transparencia.serratalhada.pe.gov.br/FolhasPagamentosServidores/ativos/",
+        "SAO+JOSE+DO+BELMONTE": "https://saojosedobelmonte.pe.gov.br/portal-transparencia/folha-pagamentos/servidoresAtivos/"
     }
 
     codigos = {
@@ -132,9 +132,9 @@ class Crawler:
 
         return html
 
-    def cruzar_prefeitura(self, cidade="SANTA+CRUZ+DA+BAIXA+VERDE", servidor="", mes='4', ano='2020'):
+    def cruzar_prefeitura(self, cidade="SANTA+CRUZ+DA+BAIXA+VERDE", servidor="", mes='', ano='2020'):
 
-        url = self.urls[cidade] + "/?ano=" + ano + "&servidor=" + servidor + "&mes=" + mes
+        url = self.urls[cidade] + "?ano=" + ano + "&servidor=" + servidor + "&mes=" + mes
         print(url)
 
         driver = self.criar_crawler()
@@ -194,8 +194,8 @@ class Crawler:
                     medicos.append([nome, crm, data_inscricao, data_uf])
             except:
                 break
-            if total != 0:
-                driver.find_element(By.XPATH, f"//li[@data-num='{(i + 2)}']").click()
+            if total != 1:
+                driver.find_element(By.XPATH, f"//li[@data-num='{(i + 1)}']").click()
                 time.sleep(3)
 
         return medicos

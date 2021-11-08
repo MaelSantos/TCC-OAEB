@@ -2,7 +2,7 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from weasyprint import HTML
+# from weasyprint import HTML
 
 from .crawler.crawler import Crawler
 from .models import BeneficiarioAuxilio, BeneficiarioBolsaFamilia
@@ -103,11 +103,17 @@ def cruzar(request):
     tipoCruzamento = request.POST.get('tipoCruzamento')
     municipio = request.POST.get('municipio')
 
+    tipo_periodo = request.POST.get('tipo_periodo')
+    de = request.POST.get('de')
+    ate = request.POST.get('ate')
+    if de == "" or ate == "":
+        de = "2020-01"
+        ate = "2020-12"
     base1 = request.POST.get('base1')
     base2 = request.POST.get('base2')
 
     c = Cruzamento()
-    tableA = c.buscar_bases(base1, nome=nome, nis=nis, cidade=municipio)
+    tableA = c.buscar_bases(base1, nome=nome, nis=nis, cidade=municipio, periodoDe=de, periodoAte=ate)
 
     if base2 != "":
         sufixos = ["_" + base1[0:2].upper(), "_" + base2[0:2].upper()]
@@ -116,7 +122,7 @@ def cruzar(request):
         else:
             chave = "Nome"
 
-        tableB = c.buscar_bases(base2, nome=nome, nis=nis, cidade=municipio)
+        tableB = c.buscar_bases(base2, nome=nome, nis=nis, cidade=municipio, periodoDe=de, periodoAte=ate)
         if tipoCruzamento == "intersecao":
             data = c.cruzar_ambas(tableA, tableB, chave, sufixos)
         else:
@@ -124,15 +130,18 @@ def cruzar(request):
     else:
         data = tableA.to_html()
 
+    print(tipo_periodo)
+
     return render(request, 'polls/cruzamento.html',
                   {'data': data, "nome": nome, "nis": nis, tipoCruzamento: "selected", municipio: "selected",
-                   base1: "selected", base2 + "2": "selected"})
+                   base1: "selected", base2 + "2": "selected", tipo_periodo: "checked", "de": de, "ate": ate})
 
 
 def gerar_pdf(request):
-    htmlstring = request.POST.get('htmlstring')
-    print(htmlstring)
-    html = HTML(string=htmlstring)
-    main_doc = html.render()
-    pdf = main_doc.write_pdf()
-    return HttpResponse(pdf, content_type='application/pdf')
+    pass
+    # htmlstring = request.POST.get('htmlstring')
+    # print(htmlstring)
+    # html = HTML(string=htmlstring)
+    # main_doc = html.render()
+    # pdf = main_doc.write_pdf()
+    # return HttpResponse(pdf, content_type='application/pdf')

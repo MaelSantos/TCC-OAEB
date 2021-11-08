@@ -12,9 +12,13 @@ class Cruzamento:
 
     crawler = Crawler()
 
-    def buscar_auxilio_bolsa(self, cidade="SANTA+CRUZ+DA+BAIXA+VERDE", nome="", nis="", bolsa=True):
-        de = "&de=01%2F01%2F2020"
-        ate = "&ate=31%2F12%2F2020"
+    def buscar_auxilio_bolsa(self, cidade="SANTA+CRUZ+DA+BAIXA+VERDE", nome="", nis="", bolsa=True, periodoDe="2020-01", periodoAte="2020-12"):
+        periodoDe = periodoDe.split("-")
+        periodoAte = periodoAte.split("-")
+
+        de = "&de=01%2F" + periodoDe[1] + "%2F" + periodoDe[0]
+        ate = "&ate=30%2F" + periodoAte[1] + "%2F" + periodoAte[0]
+
         estado = "&uf=PE&nomeMunicipio=" + cidade
         if nis != "":
             nis = "&cpfNisBeneficiario=" + nis
@@ -34,6 +38,7 @@ class Cruzamento:
     def buscar_prefeitura(self, nome="", cidade=""):
         html = self.crawler.cruzar_prefeitura(servidor=nome, cidade=cidade)
         table_PF = pd.read_html(html)[0]
+        table_PF = table_PF.drop_duplicates(subset="Nome", keep='first')
         return table_PF
 
     def buscar_orgaos(self, nome="", nis="", cidade=""):
@@ -42,12 +47,12 @@ class Cruzamento:
         table_medicos = pd.DataFrame(table_data, columns=colunas)
         return table_medicos
 
-    def buscar_bases(self, base, nome="", nis="", cidade=""):
+    def buscar_bases(self, base, nome="", nis="", cidade="", periodoDe="2020-01", periodoAte="2020-12"):
         cidade = cidade.replace("_", "+")
         if base == "auxilio":
-            table = self.buscar_auxilio_bolsa(cidade=cidade, nome=nome, nis=nis, bolsa=False)
+            table = self.buscar_auxilio_bolsa(cidade=cidade, nome=nome, nis=nis, bolsa=False, periodoDe=periodoDe, periodoAte=periodoAte)
         elif base == "bolsa":
-            table = self.buscar_auxilio_bolsa(cidade=cidade, nome=nome, nis=nis)
+            table = self.buscar_auxilio_bolsa(cidade=cidade, nome=nome, nis=nis, periodoDe=periodoDe, periodoAte=periodoAte)
         elif base == "orgao":
             table = self.buscar_orgaos(nome=nome, cidade=cidade)
         elif base == "prefeitura":
@@ -62,7 +67,8 @@ class Cruzamento:
 
     def cruzar_diferenca(self, tableA, tableB, chave, sufixos=['A', 'B']):
         # tableB = tableB.drop(columns=['UF', 'CPF'])
-        diferenca = tableA.merge(tableB, how='outer', on=chave, suffixes=sufixos, indicator=True).loc[lambda x: x['_merge'] == 'left_only']
+        diferenca = tableA.merge(tableB, how='outer', on=chave, suffixes=sufixos, indicator=True).loc[
+            lambda x: x['_merge'] == 'left_only']
         # tableB = tableB.drop(columns=['Nome'])
         # diferenca = diferenca.drop(columns=tableB.columns)
         return diferenca.to_html()
