@@ -6,7 +6,8 @@ if($(".dataframe") != undefined){
 }
 
 $('#alerta').hide();
-$('#alerta').hide();
+$('#progresso').hide();
+$('#divOrgaos').hide();
 
 function regraBases(){
     base1 = $( "#base1 option:selected" ).text();
@@ -15,11 +16,16 @@ function regraBases(){
     if(base1 == base2){
         $.alert("As bases de dados não podem ser iguais!");
         $("#buscar").attr("disabled", true);
-        $('#alerta').show()
+        $('#alerta').show();
     } else{
         $("#buscar").attr("disabled", false);
-        $('#alerta').hide()
+        $('#alerta').hide();
     }
+
+    if(base1 == "Orgãos de Classe" || base2 == "Orgãos de Classe")
+        $('#divOrgaos').show();
+    else
+        $('#divOrgaos').hide();
 }
 
 function exibirPopover(id){
@@ -74,7 +80,12 @@ function regraPeriodo(id){
         $("#de").val("");
         $("#ate").val("");
     }
+}
 
+function carregarDados(){
+    $('#progresso').show();
+    $(".dataframe").hide();
+    $("#salvar").hide();
 }
 
 $(document).ready(function(){
@@ -85,4 +96,6 @@ $(document).ready(function(){
         $('#divPeriodo').hide();
     } else
         $('#divPeriodo').show();
+
+    regraBases();
 });
