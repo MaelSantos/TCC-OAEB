@@ -1,6 +1,5 @@
 import base64
 import os
-from chardet import detect
 
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
