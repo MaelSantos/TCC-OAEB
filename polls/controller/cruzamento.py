@@ -41,8 +41,8 @@ class Cruzamento:
         table_PF = table_PF.drop_duplicates(subset="Nome", keep='first')
         return table_PF
 
-    def buscar_orgaos(self, nome="", nis="", cidade=""):
-        table_data = self.crawler.cruzar_orgaos_classe(nome=nome, cidade=cidade)
+    def buscar_orgaos(self, nome="", cidade=""):
+        table_data = self.crawler.cruzar_orgaos_medicina(nome=nome, cidade=cidade)
         colunas = ["Nome", "CRM", "Data de Inscrição", "Data de Inscrição UF"]
         table_medicos = pd.DataFrame(table_data, columns=colunas)
         return table_medicos

@@ -1,8 +1,12 @@
+import base64
+import os
+from chardet import detect
+
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-# from weasyprint import HTML
+import pdfkit
 
 from .crawler.crawler import Crawler
 from .models import BeneficiarioAuxilio, BeneficiarioBolsaFamilia
@@ -138,10 +142,15 @@ def cruzar(request):
 
 
 def gerar_pdf(request):
-    pass
-    # htmlstring = request.POST.get('htmlstring')
-    # print(htmlstring)
-    # html = HTML(string=htmlstring)
-    # main_doc = html.render()
-    # pdf = main_doc.write_pdf()
-    # return HttpResponse(pdf, content_type='application/pdf')
+    htmlstring = request.POST.get('htmlstring')
+
+    htmlstring = '<!DOCTYPE html><html lang="pt-br"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" ' \
+                 'content="IE=edge"><meta name="viewport" content="width=device-width, ' \
+                 'initial-scale=1.0"> </head><body> ' + htmlstring + ' </body></html> '
+
+    pdfkit.from_string(htmlstring, "teste.pdf")
+    pdf = open("teste.pdf", "rb")
+    response = HttpResponse(base64.b64decode(pdf.read()), content_type='application/pdf')
+    pdf.close()
+    os.remove("teste.pdf")
+    return response

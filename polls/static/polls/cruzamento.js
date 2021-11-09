@@ -50,27 +50,9 @@ function ocultarCampo(id){
     $(id).popover("hide");
 }
 
-function salvarPdf(){
-    html = $("#tabelaDados").html();
-
-    $.ajax({
-        url: "/polls/cruzamento/salvar/pdf/",
-        method: "POST",
-        data: { "htmlstring": html},
-        success: function(data) {
-            console.log(data);
-        },
-        error: function( request, status, error ){
-            console.log(error);
-        }
-
-    });
-}
-
 function regraPeriodo(id){
     radio = $(id).val();
     div = $('#divPeriodo');
-    console.log(radio);
 
     if(radio == "informar_periodo"){
         div.show();
@@ -88,6 +70,32 @@ function carregarDados(){
     $("#salvar").hide();
 }
 
+function salvarPdf(){
+    html = $("#tabelaDados").html();
+
+    $.ajax({
+        url: "/polls/cruzamento/salvar/pdf/",
+        method: "POST",
+        data: { "htmlstring": html , "csrfmiddlewaretoken" :$("input[name='csrfmiddlewaretoken']").val()},
+        success: function(data) {
+//            window.open("data:application/pdf;base64, " + encodeURI(data))
+            var byteCharacters = data;
+            var byteNumbers = new Array(byteCharacters.length);
+            for (var i = 0; i < byteCharacters.length; i++) {
+              byteNumbers[i] = byteCharacters.charCodeAt(i);
+            }
+            var byteArray = new Uint8Array(byteNumbers);
+            var file = new Blob([byteArray], { type: 'application/pdf;base64' });
+            var fileURL = URL.createObjectURL(file);
+            window.open(fileURL);
+        },
+        error: function( request, status, error ){
+            console.log(error);
+        }
+
+    });
+}
+
 $(document).ready(function(){
     $('[data-bs-toggle="popover"]').popover();
 
@@ -96,6 +104,4 @@ $(document).ready(function(){
         $('#divPeriodo').hide();
     } else
         $('#divPeriodo').show();
-
-    regraBases();
 });

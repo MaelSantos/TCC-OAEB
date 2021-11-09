@@ -119,7 +119,9 @@ class Crawler:
         html = "<table>"
         tbody = driver.find_element(By.ID, "lista").find_element(By.XPATH, "tbody").get_attribute('outerHTML')
         thead = driver.find_element(By.ID, "lista").find_element(By.XPATH, "thead").get_attribute('outerHTML') \
-            .replace("NIS Beneficiário", "NIS").replace("CPF Beneficiário", "CPF").replace("Beneficiário", "Nome").replace("BENEFICIÁRIO", "Nome")
+            .replace("NIS Beneficiário", "NIS").replace("CPF Beneficiário", "CPF").replace("Beneficiário",
+                                                                                           "Nome").replace(
+            "BENEFICIÁRIO", "Nome")
 
         if int(total) > 0:
             for i in range(int(total) - 1):  # extrai as informações de todas as paginas
@@ -160,7 +162,7 @@ class Crawler:
 
         return html
 
-    def cruzar_orgaos_classe(self, nome="", cidade="SANTA+CRUZ+DA+BAIXA+VERDE"):
+    def cruzar_orgaos_medicina(self, nome="", cidade="SANTA+CRUZ+DA+BAIXA+VERDE"):
         url = "https://portal.cfm.org.br/busca-medicos/"
         driver = self.criar_crawler()
         driver.get(url)
@@ -176,7 +178,6 @@ class Crawler:
         time.sleep(5)
 
         try:
-            # total = driver.find_element(By.CLASS_NAME, "paginationjs-last").text
             total = driver.find_elements(By.CLASS_NAME, "J-paginationjs-page")[-1].text
         except:
             total = 1
@@ -185,7 +186,8 @@ class Crawler:
         for i in range(int(total)):
             try:
                 for j in range(10):
-                    campo_medico = driver.find_element(By.CLASS_NAME, f"resultMedico_{j}").find_element(By.CLASS_NAME, "card-body")
+                    campo_medico = driver.find_element(By.CLASS_NAME, f"resultMedico_{j}").find_element(By.CLASS_NAME,
+                                                                                                        "card-body")
                     nome = campo_medico.find_element(By.TAG_NAME, "h4").text.upper()
                     campos = campo_medico.find_element(By.CLASS_NAME, "row").find_elements(By.CLASS_NAME, "col-md-4")
                     crm = campos[0].text.split(" ")[-1]
@@ -199,3 +201,16 @@ class Crawler:
                 time.sleep(3)
 
         return medicos
+
+    def cruzar_orgaos_oab(self, nome=""):
+        url = "https://cna.oab.org.br/"
+        driver = self.criar_crawler()
+        driver.get(url)
+
+        if nome != "":
+            elemento_nome = driver.find_element(By.NAME, "NomeAdvo")
+            elemento_nome.clear()
+            elemento_nome.send_keys(nome)
+        self.selecionar_select(driver, "cmbSeccional", "PE", By.ID)  # seleciona UF
+        driver.find_element(By.ID, "btnFind").click()  # busca informações
+        time.sleep(3)
