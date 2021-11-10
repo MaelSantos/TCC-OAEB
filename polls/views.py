@@ -149,7 +149,11 @@ def gerar_pdf(request):
 
     pdfkit.from_string(htmlstring, "teste.pdf")
     pdf = open("teste.pdf", "rb")
-    response = HttpResponse(base64.b64decode(pdf.read()), content_type='application/pdf')
+    response = HttpResponse(pdf.read(), content_type='application/pdf')
     pdf.close()
     os.remove("teste.pdf")
     return response
+
+
+def denuncie(request):
+    return render(request, "polls/denuncie.html")

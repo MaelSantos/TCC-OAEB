@@ -1,0 +1,27 @@
+{% extends "polls/menu.html" %}
+{% load static %}
+
+{% block links %}
+{% endblock %}
+
+{% block titulo %}Web Crawling{% endblock %}
+
+{% block denuncie %}active{% endblock %}
+
+{% block content %}
+
+    <form method="POST" class="form-signin" action="/polls/cruzamento/auxilios/busca/">
+        {% csrf_token %}
+        <div class="form-group mb-3">
+            <label for="nomeBeneficiario">Nome:</label>
+            <input type="text" class="form-control" id="nomeBeneficiario" name="nomeBeneficiario" value="{{ nome }}" placeholder="Nome">
+        </div>
+        <div class="form-group mb-3">
+            <label for="nis">NIS:</label>
+            <input type="text" class="form-control" id="nis" name="nis" value="{{ nis }}" placeholder="Número do NIS">
+        </div>
+
+        <button type="submit" id="buscar" class="btn btn-primary">Procurar</button>
+    </form>
+
+{% endblock %}

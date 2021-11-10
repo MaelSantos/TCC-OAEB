@@ -68,6 +68,16 @@ function carregarDados(){
     $('#progresso').show();
     $(".dataframe").hide();
     $("#salvar").hide();
+
+    orgao = $("#orgaos").val();
+    nome = $("#nomeBeneficiario").val().trim();
+    if(orgao == "advocacia")
+        if(nome.length < 3){
+            $.alert("Para realizar um cruzamento com essa opção de orgão deve-se informar obrigatoriamente um nome.");
+            return;
+        }
+
+    $("#buscar").click();
 }
 
 function salvarPdf(){
@@ -78,15 +88,16 @@ function salvarPdf(){
         method: "POST",
         data: { "htmlstring": html , "csrfmiddlewaretoken" :$("input[name='csrfmiddlewaretoken']").val()},
         success: function(data) {
-//            window.open("data:application/pdf;base64, " + encodeURI(data))
-//            var byteCharacters = data;
-//            var byteNumbers = new Array(byteCharacters.length);
-//            for (var i = 0; i < byteCharacters.length; i++) {
-//              byteNumbers[i] = byteCharacters.charCodeAt(i);
-//            }
-//            var byteArray = new Uint8Array(byteNumbers);
-            var file = new Blob([data], { type: 'application/pdf;base64, ' });
+//            window.open("data:application/pdf;" + encodeURI(data));
+            var byteCharacters = data;
+            var byteNumbers = new Array(byteCharacters.length);
+            for (var i = 0; i < byteCharacters.length; i++) {
+              byteNumbers[i] = byteCharacters.charCodeAt(i);
+            }
+            var byteArray = new Uint8Array(byteNumbers);
+            var file = new Blob([byteArray], { type: 'application/pdf' });
             var fileURL = URL.createObjectURL(file);
+
             window.open(fileURL);
         },
         error: function( request, status, error ){

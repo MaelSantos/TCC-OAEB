@@ -5,6 +5,8 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import Select
+from selenium.webdriver.support.wait import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 
 class Crawler:
@@ -202,15 +204,57 @@ class Crawler:
 
         return medicos
 
-    def cruzar_orgaos_oab(self, nome=""):
+    def cruzar_orgaos_oab(self, nome):
         url = "https://cna.oab.org.br/"
         driver = self.criar_crawler()
         driver.get(url)
 
-        if nome != "":
-            elemento_nome = driver.find_element(By.NAME, "NomeAdvo")
-            elemento_nome.clear()
-            elemento_nome.send_keys(nome)
+        elemento_nome = driver.find_element(By.NAME, "NomeAdvo")
+        elemento_nome.clear()
+        elemento_nome.send_keys(nome)
         self.selecionar_select(driver, "cmbSeccional", "PE", By.ID)  # seleciona UF
         driver.find_element(By.ID, "btnFind").click()  # busca informações
         time.sleep(3)
+
+        resultados = driver.find_element(By.ID, "divResult").find_elements(By.CLASS_NAME, "row")
+
+        advogados = []
+        for r in resultados:
+            nome = r.find_element(By.CLASS_NAME, "rowName").find_elements(By.XPATH, "span")[-1].text
+            tipo = r.find_element(By.CLASS_NAME, "rowTipoInsc").find_elements(By.XPATH, "span")[-1].text
+            inscricao = r.find_element(By.CLASS_NAME, "rowInsc").find_elements(By.XPATH, "span")[-1].text
+            uf = r.find_element(By.CLASS_NAME, "rowUf").find_elements(By.XPATH, "span")[-1].text
+            advogados.append([nome, tipo, inscricao, uf])
+        return advogados
+
+    def cruzar_orgaos_crea(self, nome):
+        url = "https://consultaprofissional.confea.org.br/"
+        driver = self.criar_crawler()
+        driver.get(url)
+
+        elemento_nome = driver.find_element(By.ID, "ContentPlaceHolder1_txtNome")
+        elemento_nome.clear()
+        elemento_nome.send_keys(nome)
+
+        driver.find_element(By.CLASS_NAME, "g-recaptcha").click()  # aceita captcha
+        time.sleep(3)
+
+        driver.find_element(By.ID, "recaptcha-audio-button").click()  # aceita captcha
+        # driver.find_element(By.CLASS_NAME, "audio-button-holder").click()  # aceita captcha
+        time.sleep(3)
+        # try:
+        #     audio_btn = WebDriverWait(driver, 50).until(
+        #         EC.element_to_be_clickable((By.XPATH, '//button[@id="recaptcha-audio-button"]'))
+        #     )
+        #     driver.implicitly_wait(10)
+        #     audio_btn.click()
+        # except Exception:
+        #     print("sem verificação")
+        driver.find_element(By.ID, "ContentPlaceHolder1_btnBuscar").click()  # busca informações
+        time.sleep(3)
+        return ""
+
+
+c = Crawler()
+d = c.cruzar_orgaos_crea("maria")
+print(d)

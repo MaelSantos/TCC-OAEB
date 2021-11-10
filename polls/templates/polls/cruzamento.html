@@ -58,6 +58,7 @@
             <label for="orgaos">Orgãos de Classe:</label>
             <select class="form-select" name="orgaos" id="orgaos">
                 <option value="medicina" {{ medicina }}>Medicina</option>
+                <option value="advocacia" {{ advocacia }}>Advocacia (AOB)</option>
             </select>
         </div>
 
@@ -95,7 +96,7 @@
         </div>
 
         <div class="form-group mb-3">
-            <label for="nomeBeneficiario">Nome do Beneficíario:</label>
+            <label for="nomeBeneficiario">Nome:</label>
             <input type="text" class="form-control" id="nomeBeneficiario" name="nomeBeneficiario" value="{{ nome }}" placeholder="Nome">
         </div>
         <div class="form-group mb-3">
@@ -103,7 +104,8 @@
             <input type="text" class="form-control" id="nis" name="nis" value="{{ nis }}" placeholder="Número do NIS">
         </div>
 
-        <button type="submit" id="buscar" class="btn btn-primary" onclick="carregarDados()">Iniciar Cruzamento</button>
+        <button type="button" class="btn btn-primary" onclick="carregarDados()">Iniciar Cruzamento</button>
+        <button type="submit" id="buscar" style="display: hidden;"> </button>
     </form>
 
     <div class="alert alert-danger mt-3" role="alert" id="alerta">
