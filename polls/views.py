@@ -147,11 +147,19 @@ def gerar_pdf(request):
                  'content="IE=edge"><meta name="viewport" content="width=device-width, ' \
                  'initial-scale=1.0"> </head><body> ' + htmlstring + ' </body></html> '
 
-    pdfkit.from_string(htmlstring, "teste.pdf")
-    pdf = open("teste.pdf", "rb")
-    response = HttpResponse(pdf.read(), content_type='application/pdf')
-    pdf.close()
-    os.remove("teste.pdf")
+    # pdfkit.from_string(htmlstring, "teste.pdf")
+    options = {
+        'page-size': 'Letter',
+        'encoding': "UTF-8",
+    }
+    pdf = pdfkit.from_string(htmlstring, False, options)
+    # pdf = open("teste.pdf", "rb")
+    # response = HttpResponse(pdf.read(), content_type='application/pdf')
+    response = HttpResponse(pdf, content_type='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename="export.pdf"'
+    # pdf.close()
+    # os.remove("teste.pdf")
+
     return response
 
 

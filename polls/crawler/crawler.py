@@ -255,6 +255,6 @@ class Crawler:
         return ""
 
 
-c = Crawler()
-d = c.cruzar_orgaos_crea("maria")
-print(d)
+# c = Crawler()
+# d = c.cruzar_orgaos_crea("maria")
+# print(d)
