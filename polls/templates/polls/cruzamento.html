@@ -122,7 +122,13 @@
 
 {% block optional %}
     {% if data != None and data != "" %}
-        <button type="button" id="salvar" class="btn btn-primary" onclick="salvarPdf()">Salvar PDF</button>
+        <form method="POST" action="/polls/cruzamento/salvar/pdf/" target="_blank">
+            {% csrf_token %}
+            <button type="button" class="btn btn-primary" onclick="salvarPdf()">Salvar PDF</button>
+            <input type="text" id="htmlstring" name="htmlstring" style="display: none;">
+            <button type="submit" id="salvar" style="display: none;"> </button>
+        </form>
+
         <div class="d-flex justify-content-center justify-content-lg-between p-4 border-bottom" id="tabelaDados">
             {{ data | safe }}
         </div>

@@ -82,37 +82,8 @@ function carregarDados(){
 
 function salvarPdf(){
     html = $("#tabelaDados").html();
-
-    $.ajax({
-        url: "/polls/cruzamento/salvar/pdf/",
-        method: "POST",
-        data: { "htmlstring": html , "csrfmiddlewaretoken" :$("input[name='csrfmiddlewaretoken']").val()},
-        success: function(data) {
-//            console.log(data);
-//            var byteCharacters = data;
-//            var byteNumbers = new Array(byteCharacters.length);
-//            for (var i = 0; i < byteCharacters.length; i++) {
-//              byteNumbers[i] = byteCharacters.charCodeAt(i);
-//            }
-//            var byteArray = new Uint8Array(byteNumbers);
-//            var file = new Blob([byteArray], { type: 'application/pdf' });
-//            var url = URL.createObjectURL(file);
-//
-////            let data2 = new Blob([data], { type: 'text/pdf' });
-////            let url = window.URL.createObjectURL(data2);
-//            let tempLink = document.createElement('a');
-//            tempLink.href = url;
-//            tempLink.setAttribute('download', 'filename.pdf');
-//            tempLink.click();
-            let file = new Blob([data], { type: 'application/pdf' })
-            let fileurl = window.URL.createObjectURL(file)
-            window.open(fileurl)
-        },
-        error: function( request, status, error ){
-            console.log(error);
-        }
-
-    });
+    $("#htmlstring").val(html);
+    $("#salvar").click();
 }
 
 $(document).ready(function(){
