@@ -65,9 +65,6 @@ function regraPeriodo(id){
 }
 
 function carregarDados(){
-    $('#progresso').show();
-    $(".dataframe").hide();
-    $("#salvar").hide();
 
     orgao = $("#orgaos").val();
     nome = $("#nomeBeneficiario").val().trim();
@@ -76,7 +73,9 @@ function carregarDados(){
             $.alert("Para realizar um cruzamento com essa opção de orgão deve-se informar obrigatoriamente um nome.");
             return;
         }
-
+    $('#progresso').show();
+    $(".dataframe").hide();
+    $("#salvar").hide();
     $("#buscar").click();
 }
 
