@@ -1,12 +1,11 @@
 import time
+import requests
 
 from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import Select
-from selenium.webdriver.support.wait import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
 
 
 class Crawler:
@@ -181,7 +180,7 @@ class Crawler:
 
         try:
             total = driver.find_elements(By.CLASS_NAME, "J-paginationjs-page")[-1].text
-        except:
+        except Exception:
             total = 1
 
         medicos = []
@@ -196,7 +195,7 @@ class Crawler:
                     data_inscricao = campos[1].text.split(" ")[-1]
                     data_uf = campos[2].text.split(" ")[-1]
                     medicos.append([nome, crm, data_inscricao, data_uf])
-            except:
+            except Exception:
                 break
             if total != 1:
                 driver.find_element(By.XPATH, f"//li[@data-num='{(i + 1)}']").click()
@@ -213,6 +212,11 @@ class Crawler:
         elemento_nome.clear()
         elemento_nome.send_keys(nome)
         self.selecionar_select(driver, "cmbSeccional", "PE", By.ID)  # seleciona UF
+
+        site_key = driver.find_element(By.CLASS_NAME, "g-recaptcha").get_attribute("data-sitekey")
+        captcha_token = self.resolver_catcha(url, site_key)
+        driver.execute_script(f'document.getElementById("g-recaptcha-response").innerHTML = "{captcha_token}"')
+        time.sleep(3)
         driver.find_element(By.ID, "btnFind").click()  # busca informações
         time.sleep(3)
 
@@ -227,7 +231,7 @@ class Crawler:
             advogados.append([nome, tipo, inscricao, uf])
         return advogados
 
-    def cruzar_orgaos_crea(self, nome):
+    def cruzar_orgaos_confea(self, nome):
         url = "https://consultaprofissional.confea.org.br/"
         driver = self.criar_crawler()
         driver.get(url)
@@ -236,25 +240,86 @@ class Crawler:
         elemento_nome.clear()
         elemento_nome.send_keys(nome)
 
-        driver.find_element(By.CLASS_NAME, "g-recaptcha").click()  # aceita captcha
-        time.sleep(3)
-
-        driver.find_element(By.ID, "recaptcha-audio-button").click()  # aceita captcha
-        # driver.find_element(By.CLASS_NAME, "audio-button-holder").click()  # aceita captcha
-        time.sleep(3)
-        # try:
-        #     audio_btn = WebDriverWait(driver, 50).until(
-        #         EC.element_to_be_clickable((By.XPATH, '//button[@id="recaptcha-audio-button"]'))
-        #     )
-        #     driver.implicitly_wait(10)
-        #     audio_btn.click()
-        # except Exception:
-        #     print("sem verificação")
+        site_key = driver.find_element(By.CLASS_NAME, "g-recaptcha").get_attribute("data-sitekey")
+        captcha_token = self.resolver_catcha(url, site_key)
+        driver.execute_script(f'document.getElementById("g-recaptcha-response").innerHTML = "{captcha_token}"')
         driver.find_element(By.ID, "ContentPlaceHolder1_btnBuscar").click()  # busca informações
         time.sleep(3)
-        return ""
+
+        html = "<table>"
+        elementos_table = driver.find_element(By.ID, "ContentPlaceHolder1_gvResultado")
+        thead = elementos_table.find_element(By.TAG_NAME, "tbody").find_element(By.TAG_NAME, "tr").get_attribute(
+            'outerHTML')
+        thead = "</thead>" + thead + "</thead>"
+        driver.execute_script('document.getElementsByTagName("tr")[0].remove()')
+        tbody = elementos_table.find_element(By.TAG_NAME, "tbody").get_attribute('outerHTML')
+
+        fim = False
+
+        contador = 2
+        try:
+            while not fim:
+                driver.find_element(By.XPATH, f"//*[contains(text(), '{contador}')]").click()
+                time.sleep(5)
+                elementos_table = driver.find_element(By.ID, "ContentPlaceHolder1_gvResultado")
+                driver.execute_script('document.getElementsByTagName("tr")[0].remove()')
+                tbody += elementos_table.find_element(By.XPATH, "tbody").get_attribute('outerHTML')
+                contador += 1
+        except:
+            pass
+        html += thead + tbody + "</table>"
+        return html
+
+    def cruzar_orgaos_cfo(self, nome):
+        url = "https://website.cfo.org.br/profissionais-cadastrados/"
+        driver = self.criar_crawler()
+        driver.get(url)
+
+        elemento_nome = driver.find_element(By.NAME, "nome")
+        elemento_nome.clear()
+        elemento_nome.send_keys(nome)
+        self.selecionar_select(driver, "cro", "PE", By.NAME)
+
+        driver.find_element(By.ID, "btnConsulta").click()
+        time.sleep(3)
+
+        dentistas = []
+        proximo = driver.find_element(By.XPATH, "//*[contains(text(), 'Próxima')]")
+        try:
+            nomes = driver.find_elements(By.TAG_NAME, "b")
+            for n in nomes:
+                dentistas.append(n.text)
+            while proximo.text == "Próxima":
+                proximo.click()
+                time.sleep(3)
+                nomes = driver.find_elements(By.TAG_NAME, "b")
+                for n in nomes:
+                    dentistas.append(n.text)
+                proximo = driver.find_element(By.XPATH, "//*[contains(text(), 'Próxima')]")
+        except Exception:
+            print("Fim")
+        return dentistas
+
+    def resolver_catcha(self, site_url, site_key):
+        chave_api = "35f5532bbd7faa4e32db0a180b52e766"
+        link_solicitacao = f"http://2captcha.com/in.php?key={chave_api}&method=userrecaptcha&googlekey={site_key}&pageurl={site_url}&json=true"
+
+        resposta_solicitacao = requests.get(link_solicitacao).json()
+        print(resposta_solicitacao)
+        captcha_id = resposta_solicitacao.get("request")
+        captcha_token = "CAPCHA_NOT_READY"
+
+        link_requisicao = f"http://2captcha.com/res.php?key={chave_api}&action=get&id={captcha_id}&json=true"
+        while captcha_token == "CAPCHA_NOT_READY":
+            time.sleep(10)
+            resposta_requisicao = requests.get(link_requisicao).json()
+            print(resposta_requisicao)
+            if resposta_requisicao.get("status") == 1:
+                captcha_token = resposta_requisicao.get("request")
+
+        return captcha_token
 
 
-# c = Crawler()
-# d = c.cruzar_orgaos_crea("maria")
-# print(d)
+c = Crawler()
+d = c.cruzar_orgaos_confea("JOÃO")
+print(d)

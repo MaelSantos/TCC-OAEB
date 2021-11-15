@@ -1,7 +1,4 @@
-import re
-
 from polls.crawler.crawler import Crawler
-from polls.models import BolsaFamilia, AuxilioEmergencial
 import pandas as pd
 import numpy as np
 
@@ -41,20 +38,29 @@ class Cruzamento:
         table_PF = table_PF.drop_duplicates(subset="Nome", keep='first')
         return table_PF
 
-    def buscar_orgaos(self, nome="", cidade=""):
+    def buscar_orgaos_medicina(self, nome="", cidade=""):
         table_data = self.crawler.cruzar_orgaos_medicina(nome=nome, cidade=cidade)
         colunas = ["Nome", "CRM", "Data de Inscrição", "Data de Inscrição UF"]
         table_medicos = pd.DataFrame(table_data, columns=colunas)
         return table_medicos
 
-    def buscar_bases(self, base, nome="", nis="", cidade="", periodoDe="2020-01", periodoAte="2020-12"):
+    def buscar_orgaos_aob(self, nome=""):
+        table_data = self.crawler.cruzar_orgaos_oab(nome=nome)
+        colunas = ["Nome", "Tipo", "Nº Inscrição", "UF"]
+        table_advogados = pd.DataFrame(table_data, columns=colunas)
+        return table_advogados
+
+    def buscar_bases(self, base, nome="", nis="", cidade="", periodoDe="2020-01", periodoAte="2020-12", orgaos=""):
         cidade = cidade.replace("_", "+")
         if base == "auxilio":
             table = self.buscar_auxilio_bolsa(cidade=cidade, nome=nome, nis=nis, bolsa=False, periodoDe=periodoDe, periodoAte=periodoAte)
         elif base == "bolsa":
             table = self.buscar_auxilio_bolsa(cidade=cidade, nome=nome, nis=nis, periodoDe=periodoDe, periodoAte=periodoAte)
         elif base == "orgao":
-            table = self.buscar_orgaos(nome=nome, cidade=cidade)
+            if orgaos == "medicina":
+                table = self.buscar_orgaos_medicina(nome=nome, cidade=cidade)
+            elif orgaos == "advocacia":
+                table = self.buscar_orgaos_aob(nome=nome)
         elif base == "prefeitura":
             table = self.buscar_prefeitura(nome=nome, cidade=cidade)
         return table

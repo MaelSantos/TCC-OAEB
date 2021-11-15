@@ -104,6 +104,7 @@ def cruzar(request):
     nis = request.POST.get('nis')
     tipoCruzamento = request.POST.get('tipoCruzamento')
     municipio = request.POST.get('municipio')
+    orgaos = request.POST.get('orgaos')
 
     tipo_periodo = request.POST.get('tipo_periodo')
     de = request.POST.get('de')
@@ -115,7 +116,7 @@ def cruzar(request):
     base2 = request.POST.get('base2')
 
     c = Cruzamento()
-    tableA = c.buscar_bases(base1, nome=nome, nis=nis, cidade=municipio, periodoDe=de, periodoAte=ate)
+    tableA = c.buscar_bases(base1, nome=nome, nis=nis, cidade=municipio, periodoDe=de, periodoAte=ate, orgaos=orgaos)
 
     if base2 != "":
         sufixos = ["_" + base1[0:2].upper(), "_" + base2[0:2].upper()]
@@ -124,7 +125,7 @@ def cruzar(request):
         else:
             chave = "Nome"
 
-        tableB = c.buscar_bases(base2, nome=nome, nis=nis, cidade=municipio, periodoDe=de, periodoAte=ate)
+        tableB = c.buscar_bases(base2, nome=nome, nis=nis, cidade=municipio, periodoDe=de, periodoAte=ate, orgaos=orgaos)
         if tipoCruzamento == "intersecao":
             data = c.cruzar_ambas(tableA, tableB, chave, sufixos)
         else:
@@ -136,7 +137,8 @@ def cruzar(request):
 
     return render(request, 'polls/cruzamento.html',
                   {'data': data, "nome": nome, "nis": nis, tipoCruzamento: "selected", municipio: "selected",
-                   base1: "selected", base2 + "2": "selected", tipo_periodo: "checked", "de": de, "ate": ate})
+                   orgaos: "selected", base1: "selected", base2 + "2": "selected", tipo_periodo: "checked", "de": de,
+                   "ate": ate})
 
 
 def gerar_pdf(request):

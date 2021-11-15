@@ -7,7 +7,6 @@ if($(".dataframe") != undefined){
 
 $('#alerta').hide();
 $('#progresso').hide();
-$('#divOrgaos').hide();
 
 function regraBases(){
     base1 = $( "#base1 option:selected" ).text();
@@ -93,4 +92,9 @@ $(document).ready(function(){
         $('#divPeriodo').hide();
     } else
         $('#divPeriodo').show();
+
+    if($("#base1 option:selected").text() == "Orgãos de Classe" || $("#base3 option:selected").text() == "Orgãos de Classe")
+        $('#divOrgaos').show();
+    else
+        $('#divOrgaos').hide();
 });
