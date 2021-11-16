@@ -12,7 +12,7 @@ urlpatterns = [
     path('cruzamento/auxilios/', views.cruzamento, name='cruzamento_auxilios'),
     path('cruzamento/auxilios/busca/', views.cruzar, name='cruzar_auxilios'),
 
-    path('denuncie/', views.denuncie, name='denuncie'),
+    path('analise/', views.analise, name='denuncie'),
 
     path('cruzamento/salvar/pdf/', views.gerar_pdf, name='salvar_pdf'),
 

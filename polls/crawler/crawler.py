@@ -99,7 +99,6 @@ class Crawler:
 
         print(url)
         driver.get(url)  ## carrega a página (html, js, etc.)
-        time.sleep(3)
 
         body = driver.find_element(By.ID, "lista").find_element(By.XPATH, "tbody").text
         if "Nenhum registro encontrado" in body:
@@ -110,8 +109,6 @@ class Crawler:
         time.sleep(3)
 
         self.selecionar_select(driver, "lista_length", "50", By.NAME)  # seleciona a quantidade maxima de exibição
-        # select = Select(driver.find_element(By.NAME, "lista_length"))
-        # select.select_by_value('50')
 
         time.sleep(3)
         text_total = driver.find_element(By.ID, "lista_info").get_attribute('innerHTML')
@@ -123,13 +120,15 @@ class Crawler:
             .replace("NIS Beneficiário", "NIS").replace("CPF Beneficiário", "CPF").replace("Beneficiário",
                                                                                            "Nome").replace(
             "BENEFICIÁRIO", "Nome")
-
-        if int(total) > 0:
-            for i in range(int(total) - 1):  # extrai as informações de todas as paginas
-                driver.find_element(By.ID, "lista_next").click()
-                time.sleep(5)
-                tbody += driver.find_element(By.ID, "lista").find_element(By.XPATH, "tbody").get_attribute('outerHTML')
-                print(i)
+        try:
+            if int(total) > 0:
+                for i in range(int(total) - 1):  # extrai as informações de todas as paginas
+                    driver.find_element(By.ID, "lista_next").click()
+                    time.sleep(5)
+                    tbody += driver.find_element(By.ID, "lista").find_element(By.XPATH, "tbody").get_attribute('outerHTML')
+                    print(i)
+        except:
+            pass
 
         html += thead + tbody + "</table>"
 
@@ -248,21 +247,32 @@ class Crawler:
 
         html = "<table>"
         elementos_table = driver.find_element(By.ID, "ContentPlaceHolder1_gvResultado")
-        thead = elementos_table.find_element(By.TAG_NAME, "tbody").find_element(By.TAG_NAME, "tr").get_attribute(
-            'outerHTML')
+        thead = elementos_table.find_element(By.XPATH, "tbody").find_elements(By.XPATH, "tr")[0].get_attribute('outerHTML')
+        print(thead)
         thead = "</thead>" + thead + "</thead>"
         driver.execute_script('document.getElementsByTagName("tr")[0].remove()')
+        time.sleep(2)
         tbody = elementos_table.find_element(By.TAG_NAME, "tbody").get_attribute('outerHTML')
 
         fim = False
-
         contador = 2
+        fimPaginacao = False
         try:
             while not fim:
-                driver.find_element(By.XPATH, f"//*[contains(text(), '{contador}')]").click()
+
+                if fimPaginacao:
+                    driver.find_elements(By.XPATH, f"//a[contains(text(), '...')]")[-1].click()
+                    fimPaginacao = False
+                else:
+                    driver.find_element(By.XPATH, f"//a[contains(text(), '{contador}')]").click()
+
+                if contador % 2 == 0 and contador % 5 == 0:
+                    fimPaginacao = True
+
                 time.sleep(5)
                 elementos_table = driver.find_element(By.ID, "ContentPlaceHolder1_gvResultado")
                 driver.execute_script('document.getElementsByTagName("tr")[0].remove()')
+                time.sleep(2)
                 tbody += elementos_table.find_element(By.XPATH, "tbody").get_attribute('outerHTML')
                 contador += 1
         except:
@@ -318,8 +328,3 @@ class Crawler:
                 captcha_token = resposta_requisicao.get("request")
 
         return captcha_token
-
-
-c = Crawler()
-d = c.cruzar_orgaos_confea("JOÃO")
-print(d)

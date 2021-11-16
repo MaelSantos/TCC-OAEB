@@ -8,7 +8,8 @@ import pdfkit
 
 from .crawler.crawler import Crawler
 from .models import BeneficiarioAuxilio, BeneficiarioBolsaFamilia
-from .controller.cruzamento import Cruzamento
+from .util.cruzamento import Cruzamento
+from .util.graph import Graph
 
 crawler = Crawler()
 
@@ -125,7 +126,8 @@ def cruzar(request):
         else:
             chave = "Nome"
 
-        tableB = c.buscar_bases(base2, nome=nome, nis=nis, cidade=municipio, periodoDe=de, periodoAte=ate, orgaos=orgaos)
+        tableB = c.buscar_bases(base2, nome=nome, nis=nis, cidade=municipio, periodoDe=de, periodoAte=ate,
+                                orgaos=orgaos)
         if tipoCruzamento == "intersecao":
             data = c.cruzar_ambas(tableA, tableB, chave, sufixos)
         else:
@@ -158,5 +160,33 @@ def gerar_pdf(request):
     return response
 
 
-def denuncie(request):
-    return render(request, "polls/denuncie.html")
+def analise(request):
+    if request.method == "POST":
+        municipio = request.POST.get('municipio')
+        de = request.POST.get('de')
+        ate = request.POST.get('ate')
+        c = Cruzamento()
+
+        if de == "":
+            periodo_de = "202004"
+        else:
+            periodo_de = de.replace("-", "")
+        if ate == "":
+            periodo_ate = "202012"
+        else:
+            periodo_ate = ate.replace("-", "")
+
+        data = []
+        # for periodo in range(int(periodo_de), int(periodo_ate)+1):
+        #     periodo = str(periodo)
+        #     periodo = periodo[0:4]+"-"+periodo[4::]
+        #
+        #     tabela = c.buscar_bases("auxilio", cidade=municipio, periodoDe=periodo, periodoAte=periodo)
+        #     data.append(tabela)
+
+        g = Graph()
+        data = g.get_context_data()
+
+        return render(request, "polls/analise.html", data)
+    else:
+        return render(request, "polls/analise.html")

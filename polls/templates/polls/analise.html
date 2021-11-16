@@ -1,0 +1,54 @@
+{% extends "polls/menu.html" %}
+{% load static %}
+
+{% block links %}
+{% endblock %}
+
+{% block titulo %}Web Crawling{% endblock %}
+
+{% block analise %}active{% endblock %}
+
+{% block content %}
+
+    <form method="POST" class="form-signin" action="/polls/analise/">
+        {% csrf_token %}
+
+        <div class="form-group mb-3">
+            <label for="municipio">Município:</label>
+            <select class="form-select" name="municipio" id="municipio" required>
+                <option value="SANTA_CRUZ_DA_BAIXA_VERDE" {{ SANTA_CRUZ_DA_BAIXA_VERDE }}>Santa Cruz da Baixa Verde</option>
+                <option value="SERRA_TALHADA" {{ SERRA_TALHADA }}>Serra Talhada</option>
+                <option value="TRIUNFO" {{ TRIUNFO }}>Triunfo</option>
+                <option value="CALUMBI" {{ CALUMBI }}> Calumbi</option>
+                <option value="FLORESTA" {{ FLORESTA }}>Floresta</option>
+                <option value="MIRANDIBA" {{ MIRANDIBA }}>Mirandiba</option>
+                <option value="SAO_JOSE_DO_BELMONTE" {{ SAO_JOSE_DO_BELMONTE }}>São José do Belmonte</option>
+            </select>
+        </div>
+
+        <div class="form-group mb-3" id="divPeriodo" style="display: flex;">
+            <label for="de" class="p-2">De:</label>
+            <input type="month" class="form-control" id="de" name="de" value="{{ de }}" placeholder="De">
+            <label for="ate" class="p-2">Até:</label>
+            <input type="month" class="form-control" id="ate" name="ate" value="{{ ate }}" placeholder="Até">
+        </div>
+
+        <button type="submit" id="buscar" class="btn btn-primary">Procurar</button>
+    </form>
+
+{% endblock %}
+
+{% block optional %}
+    {% if data != None and data != "" %}
+        <div class="d-flex justify-content-center justify-content-lg-between p-4 border-bottom" id="tabelaDados">
+            {{ data | safe }}
+        </div>
+    {% endif %}
+
+    {% if graph %}
+        {{ graph|safe }}
+    {% else %}
+        <p>No graph was provided.</p>
+    {% endif %}
+
+{% endblock %}

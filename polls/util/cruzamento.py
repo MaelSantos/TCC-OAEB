@@ -14,7 +14,7 @@ class Cruzamento:
         periodoAte = periodoAte.split("-")
 
         de = "&de=01%2F" + periodoDe[1] + "%2F" + periodoDe[0]
-        ate = "&ate=30%2F" + periodoAte[1] + "%2F" + periodoAte[0]
+        ate = "&ate=28%2F" + periodoAte[1] + "%2F" + periodoAte[0]
 
         estado = "&uf=PE&nomeMunicipio=" + cidade
         if nis != "":
@@ -50,6 +50,17 @@ class Cruzamento:
         table_advogados = pd.DataFrame(table_data, columns=colunas)
         return table_advogados
 
+    def buscar_orgaos_confea(self, nome=""):
+        html_data = self.crawler.cruzar_orgaos_confea(nome=nome)
+        table_engenheiros = pd.read_html(html_data)[0]
+        return table_engenheiros
+
+    def buscar_orgaos_cfo(self, nome=""):
+        table_data = self.crawler.cruzar_orgaos_cfo(nome=nome)
+        colunas = ["Nome"]
+        table_dentistas = pd.DataFrame(table_data, columns=colunas)
+        return table_dentistas
+
     def buscar_bases(self, base, nome="", nis="", cidade="", periodoDe="2020-01", periodoAte="2020-12", orgaos=""):
         cidade = cidade.replace("_", "+")
         if base == "auxilio":
@@ -57,10 +68,16 @@ class Cruzamento:
         elif base == "bolsa":
             table = self.buscar_auxilio_bolsa(cidade=cidade, nome=nome, nis=nis, periodoDe=periodoDe, periodoAte=periodoAte)
         elif base == "orgao":
+
             if orgaos == "medicina":
                 table = self.buscar_orgaos_medicina(nome=nome, cidade=cidade)
             elif orgaos == "advocacia":
                 table = self.buscar_orgaos_aob(nome=nome)
+            elif orgaos == "engenharia":
+                table = self.buscar_orgaos_confea(nome=nome)
+            elif orgaos == "odontologia":
+                table = self.buscar_orgaos_cfo(nome=nome)
+
         elif base == "prefeitura":
             table = self.buscar_prefeitura(nome=nome, cidade=cidade)
         return table

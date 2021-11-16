@@ -67,9 +67,9 @@ function carregarDados(){
 
     orgao = $("#orgaos").val();
     nome = $("#nomeBeneficiario").val().trim();
-    if(orgao == "advocacia")
+    if(orgao != "medicina")
         if(nome.length < 3){
-            $.alert("Para realizar um cruzamento com essa opção de orgão deve-se informar obrigatoriamente um nome.");
+            $.alert("Para realizar um cruzamento com essa opção de orgão deve-se informar obrigatoriamente um nome com no mínimo 3 caracteres.");
             return;
         }
     $('#progresso').show();
