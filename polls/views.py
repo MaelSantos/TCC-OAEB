@@ -1,10 +1,10 @@
-import base64
 
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 import pdfkit
+import pandas as pd
 
 from .crawler.crawler import Crawler
 from .models import BeneficiarioAuxilio, BeneficiarioBolsaFamilia
@@ -163,9 +163,11 @@ def gerar_pdf(request):
 def analise(request):
     if request.method == "POST":
         municipio = request.POST.get('municipio')
+        print(municipio)
         de = request.POST.get('de')
         ate = request.POST.get('ate')
         c = Cruzamento()
+        g = Graph()
 
         if de == "":
             periodo_de = "202004"
@@ -176,17 +178,19 @@ def analise(request):
         else:
             periodo_ate = ate.replace("-", "")
 
-        data = []
-        # for periodo in range(int(periodo_de), int(periodo_ate)+1):
-        #     periodo = str(periodo)
-        #     periodo = periodo[0:4]+"-"+periodo[4::]
-        #
-        #     tabela = c.buscar_bases("auxilio", cidade=municipio, periodoDe=periodo, periodoAte=periodo)
-        #     data.append(tabela)
+        data = None
+        for periodo in range(int(periodo_de), int(periodo_ate) + 1):
+            periodo = str(periodo)
+            periodo = periodo[0:4] + "-" + periodo[4::]
 
-        g = Graph()
-        data = g.get_context_data()
+            tabela = c.buscar_bases("auxilio", nome="joao", cidade=municipio, periodoDe=periodo, periodoAte=periodo)
+            tabela = tabela.groupby(['Valor Disponibilizado (R$)'], as_index=False)['Nome'].count()
+            tabela.insert(0, "Data", [periodo])
+            tabela = tabela.rename(columns={'Nome': 'Quantidade'})
+            tabela = tabela.replace({60000: '600,00'})
+            print(tabela)
+            data = g.get_context_data(tabela)
 
-        return render(request, "polls/analise.html", data)
+        return render(request, "polls/analise.html", {'data': data, municipio: "selected", "de": de, "ate": ate})
     else:
         return render(request, "polls/analise.html")

@@ -40,15 +40,10 @@
 
 {% block optional %}
     {% if data != None and data != "" %}
-        <div class="d-flex justify-content-center justify-content-lg-between p-4 border-bottom" id="tabelaDados">
-            {{ data | safe }}
-        </div>
+        {{ data | safe }}
     {% endif %}
 
-    {% if graph %}
-        {{ graph|safe }}
-    {% else %}
-        <p>No graph was provided.</p>
-    {% endif %}
+<!--        <div class="d-flex justify-content-center justify-content-lg-between p-4 border-bottom" id="tabelaDados">-->
+<!--        </div>-->
 
 {% endblock %}
