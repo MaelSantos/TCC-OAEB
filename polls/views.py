@@ -1,21 +1,14 @@
-from django.http import HttpResponse
-from django.shortcuts import render, redirect
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
 import pdfkit
 import pandas as pd
-from babel.numbers import format_currency
+
+from django.http import HttpResponse
+from django.shortcuts import render, redirect
 
 from .crawler.crawler import Crawler
-from .models import BeneficiarioAuxilio, BeneficiarioBolsaFamilia
 from .util.cruzamento import Cruzamento
 from .util.graph import Graph
 
 crawler = Crawler()
-
-engine = create_engine('mysql+pymysql://root:@localhost/teste?charset=utf8', echo=True)
-Session = sessionmaker(bind=engine)
-session = Session()
 
 
 def index(request):
@@ -59,41 +52,6 @@ def buscar(request):
 
 def bolsa_famila(request):
     return render(request, "polls/bolsa_familia.html")
-
-
-def buscar_bolsa_famila(request):
-    if request.method == "POST":
-        nome = request.POST.get('nomeBeneficiario')
-        nis = request.POST.get('nis')
-        tipoBusca = request.POST.get('tipoBusca')
-
-        if tipoBusca == "d":
-            devido = "selected"
-            indevido = ""
-
-            data = session.query(BeneficiarioAuxilio).filter(
-                BeneficiarioAuxilio.nome_beneficiario.like("%" + nome + "%")) \
-                .filter(BeneficiarioBolsaFamilia.nome_favorecido.like("%" + nome + "%")) \
-                .filter(BeneficiarioAuxilio.nis.like("%" + nis + "%")) \
-                .filter(BeneficiarioBolsaFamilia.nis.like("%" + nis + "%")) \
-                .filter(BeneficiarioBolsaFamilia.nis == BeneficiarioAuxilio.nis)
-        else:
-            devido = ""
-            indevido = "selected"
-
-            data = session.query(BeneficiarioBolsaFamilia).filter(
-                BeneficiarioBolsaFamilia.nome_favorecido.like("%" + nome + "%")) \
-                .filter(BeneficiarioBolsaFamilia.nis.like("%" + nis + "%")) \
-                .filter(BeneficiarioBolsaFamilia.nis.not_in(session.query(BeneficiarioAuxilio.nis).filter(
-                BeneficiarioAuxilio.nome_beneficiario.like("%" + nome + "%")).filter(
-                BeneficiarioAuxilio.nis.like("%" + nis + "%")))).group_by(BeneficiarioBolsaFamilia.nis)
-
-        # print(data)
-
-        return render(request, 'polls/bolsa_familia.html',
-                      {'data': data, "nome": nome, "nis": nis, "devido": devido, "indevido": indevido})
-    else:
-        return redirect('busca_bolsa_familia')
 
 
 def cruzamento(request):
@@ -163,7 +121,7 @@ def gerar_pdf(request):
 def analise(request):
     if request.method == "POST":
         municipio = request.POST.get('municipio')
-        print(municipio)
+        tipoGrafico = request.POST.get('tipoGrafico')
         de = request.POST.get('de')
         ate = request.POST.get('ate')
         c = Cruzamento()
@@ -178,29 +136,41 @@ def analise(request):
         else:
             periodo_ate = ate.replace("-", "")
 
-        data = None
         tabelas = None
-        for periodo in range(int(periodo_de), int(periodo_ate) + 1):
-            periodo = str(periodo)
-            periodo = periodo[0:4] + "-" + periodo[4::]
+        if tipoGrafico == "":
+            for periodo in range(int(periodo_de), int(periodo_ate) + 1):
+                periodo = str(periodo)
+                periodo = periodo[0:4] + "-" + periodo[4::]
 
-            tabela = c.buscar_bases("auxilio", nome="", cidade=municipio, periodoDe=periodo, periodoAte=periodo)
-            tabela.insert(0, "Data", periodo)
+                tabela = c.buscar_bases("auxilio", nome="", cidade=municipio, periodoDe=periodo, periodoAte=periodo)
+                tabela.insert(0, "Data", periodo)
 
-            if tabelas is not None:
-                tabelas = pd.concat([tabelas, tabela])
-            else:
-                tabelas = tabela
+                if tabelas is not None:
+                    tabelas = pd.concat([tabelas, tabela])
+                else:
+                    tabelas = tabela
 
-        tabelas['Valor Disponibilizado (R$)'] = tabelas['Valor Disponibilizado (R$)'].apply(g.format_valor)
-        tabelas = tabelas.groupby(['Valor Disponibilizado (R$)', 'Data'], as_index=False)['UF'].count()
-        tabelas = tabelas.rename(columns={'UF': 'Quantidade'})
-        # tabela['Valor Disponibilizado (R$)'] = tabela['Valor Disponibilizado (R$)'].apply(
-        #     lambda x: format_currency(int(x)/100, currency="", locale="pt_br") if str(x).find(",") is -1 else x)
+            tabelas['Valor Disponibilizado (R$)'] = tabelas['Valor Disponibilizado (R$)'].apply(g.format_valor)
+            tabelas = tabelas.groupby(['Valor Disponibilizado (R$)', 'Data'], as_index=False)['UF'].count()
+            tabelas = tabelas.rename(columns={'UF': 'Quantidade'})
 
-        print(tabelas)
-        data = g.get_context_data(tabelas)
+            print(tabelas)
+            data = g.get_context_valor(tabelas)
+        else:
+            tabela = []
+            for cidade in ["Triunfo", "Calumbi", "Floresta", "Mirandiba", "Santa Cruz da Baixa Verde",
+                           "Serra Talhada", "Sao Jose do Belmonte"]:
+                for periodo in range(int(periodo_de), int(periodo_ate) + 1):
+                    periodo = str(periodo)
+                    periodo = periodo[0:4] + "-" + periodo[4::]
 
-        return render(request, "polls/analise.html", {'data': data, municipio: "selected", "de": de, "ate": ate})
+                    total = c.buscar_auxilio_total(cidade=cidade.replace(" ", "+").upper(), periodoDe=periodo, periodoAte=periodo)
+                    tabela.append([cidade, total, periodo])
+
+            tabelas = pd.DataFrame(tabela, columns=["Município", "Total", "Data"])
+            print(tabelas)
+            data = g.get_context_total(tabelas)
+
+        return render(request, "polls/analise.html", {'data': data, municipio: "selected", tipoGrafico: "selected", "de": de, "ate": ate})
     else:
         return render(request, "polls/analise.html")

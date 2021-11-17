@@ -14,6 +14,14 @@
         {% csrf_token %}
 
         <div class="form-group mb-3">
+            <label for="tipoGrafico">Tipo Gráfico:</label>
+            <select class="form-select" name="tipoGrafico" id="tipoGrafico" onchange="regraGraficos(this)" required>
+                <option value="valor" {{ valor }}>Mês vs Valor</option>
+                <option value="total" {{ total }}>Cidades vs Total</option>
+            </select>
+        </div>
+
+        <div class="form-group mb-3" id="divMunicipio">
             <label for="municipio">Município:</label>
             <select class="form-select" name="municipio" id="municipio" required>
                 <option value="SANTA_CRUZ_DA_BAIXA_VERDE" {{ SANTA_CRUZ_DA_BAIXA_VERDE }}>Santa Cruz da Baixa Verde</option>
@@ -45,5 +53,5 @@
 
 <!--        <div class="d-flex justify-content-center justify-content-lg-between p-4 border-bottom" id="tabelaDados">-->
 <!--        </div>-->
-
+    <script src="{% static 'polls/analise.js' %}"></script>
 {% endblock %}

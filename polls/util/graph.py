@@ -3,9 +3,15 @@ import plotly.express as px
 
 class Graph:
 
-    def get_context_data(self, df):
+    def get_context_valor(self, df):
         fig = px.bar(df, x="Data", y="Quantidade", color="Valor Disponibilizado (R$)", barmode="group",
                      text="Quantidade")
+        fig.update_traces(textposition='outside')
+        return fig.to_html()
+
+    def get_context_total(self, df):
+        fig = px.bar(df, x="Data", y="Total", color="Município", barmode="group",
+                     text="Total")
         fig.update_traces(textposition='outside')
         return fig.to_html()
 

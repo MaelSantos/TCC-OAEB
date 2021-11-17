@@ -1,7 +1,6 @@
 import time
 import requests
 
-from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
@@ -45,54 +44,33 @@ class Crawler:
         select = Select(driver.find_element(tipo, nome))
         select.select_by_value(valor)  # seleciona a uf PE
 
-    def buscar(self, url, id=""):
+    def cruzar_auxilios_total(self, url):
         driver = self.criar_crawler()
-        driver.get(url)  ## carrega a página (htlm, js, etc.)
-        time.sleep(1)
-        # tabela = driver.find_element_by_id(id)
 
-        # WebDriverWait(driver, 1000000).until(lambda d: d.find_element_by_id(id))
-        html = driver.page_source
-
-        return html
-
-    def crawler_prefeitura(self, cidade, servidor, mes='4', ano='2020'):
-
-        url = self.urls[cidade] + "?ano=" + ano + "&servidor=" + servidor.upper() + "&mes=" + mes
         print(url)
+        driver.get(url)  ## carrega a página (html, js, etc.)
 
-        html = self.buscar(url, "table")
+        body = driver.find_element(By.ID, "lista").find_element(By.XPATH, "tbody").text
+        if "Nenhum registro encontrado" in body:
+            driver.refresh()  # evitar erros da pagina do auxilio
+            time.sleep(4)
 
-        soup = BeautifulSoup(html, 'html.parser')
-        tabela = soup.find("table", id="table")  ## busca tabela com dados
-        return tabela.prettify()
+        driver.find_element(By.CLASS_NAME, "botao__gera_paginacao_completa").click()  # exibe toda a paginação
+        time.sleep(5)
 
-    def crawler_bolsafamilia(self, nome="", nis="", de='2020-01', ate='2021-12'):
+        self.selecionar_select(driver, "lista_length", "50", By.NAME)  # seleciona a quantidade maxima de exibição
+        time.sleep(5)
 
-        if nis != "":
-            nis = "&cpfNisBeneficiario=" + nis  # &cpfNisBeneficiario=2.362.676.777-5
+        text_total = driver.find_element(By.ID, "lista_info").get_attribute('innerHTML')
+        total = text_total.split(" ")[-1]
 
-        if nome != "":
-            nome = "&nomeBeneficiario=" + nome.replace(" ", "+")  # &nomeBeneficiario=ACUCENA+DIAS+DO+NASCIMENTO+SANTOS
+        driver.find_element(By.XPATH, f"//a[contains(text(), '{total}')]").click()
+        time.sleep(5)
 
-        listDe = de.split("-")
-        listAte = ate.split("-")
+        total_ultima = len(driver.find_elements(By.TAG_NAME, "tr"))-1
+        print(total_ultima)
 
-        de = "&de=01%2F" + listDe[1] + "%2F" + listDe[0]
-        ate = "&ate=31%2F" + listAte[1] + "%2F" + listAte[0]
-
-        municipio = "&nomeMunicipio=SANTA+CRUZ+DA+BAIXA+VERDE"
-
-        urlGeral = "https://www.portaltransparencia.gov.br/beneficios/bolsa-familia?paginacaoSimples=true&tamanhoPagina=&offset=&direcaoOrdenacao=asc&colunasSelecionadas=linkDetalhamento%2Cuf%2Cmunicipio%2Ccpf%2Cnis%2Cbeneficiario%2CvalorTotalPeriodo&uf=PE"
-
-        url = urlGeral + nis + nome + de + ate + municipio
-        print(url)
-
-        html = self.buscar(url, "lista")
-
-        soup = BeautifulSoup(html, 'html.parser')
-        tabela = soup.find("table", id="lista")  ## busca tabela com dados
-        return tabela.prettify()
+        return ((int(total)-1) * 50)+total_ultima
 
     def cruzar_auxilios(self, url):
         driver = self.criar_crawler()
@@ -125,7 +103,8 @@ class Crawler:
                 for i in range(int(total) - 1):  # extrai as informações de todas as paginas
                     driver.find_element(By.ID, "lista_next").click()
                     time.sleep(5)
-                    tbody += driver.find_element(By.ID, "lista").find_element(By.XPATH, "tbody").get_attribute('outerHTML')
+                    tbody += driver.find_element(By.ID, "lista").find_element(By.XPATH, "tbody").get_attribute(
+                        'outerHTML')
                     print(i)
         except:
             pass
@@ -247,7 +226,8 @@ class Crawler:
 
         html = "<table>"
         elementos_table = driver.find_element(By.ID, "ContentPlaceHolder1_gvResultado")
-        thead = elementos_table.find_element(By.XPATH, "tbody").find_elements(By.XPATH, "tr")[0].get_attribute('outerHTML')
+        thead = elementos_table.find_element(By.XPATH, "tbody").find_elements(By.XPATH, "tr")[0].get_attribute(
+            'outerHTML')
         print(thead)
         thead = "</thead>" + thead + "</thead>"
         driver.execute_script('document.getElementsByTagName("tr")[0].remove()')
