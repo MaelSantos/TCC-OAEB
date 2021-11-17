@@ -106,11 +106,11 @@ class Crawler:
             time.sleep(4)
 
         driver.find_element(By.CLASS_NAME, "botao__gera_paginacao_completa").click()  # exibe toda a paginação
-        time.sleep(3)
+        time.sleep(5)
 
         self.selecionar_select(driver, "lista_length", "50", By.NAME)  # seleciona a quantidade maxima de exibição
+        time.sleep(5)
 
-        time.sleep(3)
         text_total = driver.find_element(By.ID, "lista_info").get_attribute('innerHTML')
         total = text_total.split(" ")[-1]
 

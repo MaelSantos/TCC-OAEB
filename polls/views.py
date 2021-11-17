@@ -1,10 +1,10 @@
-
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 import pdfkit
 import pandas as pd
+from babel.numbers import format_currency
 
 from .crawler.crawler import Crawler
 from .models import BeneficiarioAuxilio, BeneficiarioBolsaFamilia
@@ -179,17 +179,27 @@ def analise(request):
             periodo_ate = ate.replace("-", "")
 
         data = None
+        tabelas = None
         for periodo in range(int(periodo_de), int(periodo_ate) + 1):
             periodo = str(periodo)
             periodo = periodo[0:4] + "-" + periodo[4::]
 
-            tabela = c.buscar_bases("auxilio", nome="joao", cidade=municipio, periodoDe=periodo, periodoAte=periodo)
-            tabela = tabela.groupby(['Valor Disponibilizado (R$)'], as_index=False)['Nome'].count()
-            tabela.insert(0, "Data", [periodo])
-            tabela = tabela.rename(columns={'Nome': 'Quantidade'})
-            tabela = tabela.replace({60000: '600,00'})
-            print(tabela)
-            data = g.get_context_data(tabela)
+            tabela = c.buscar_bases("auxilio", nome="", cidade=municipio, periodoDe=periodo, periodoAte=periodo)
+            tabela.insert(0, "Data", periodo)
+
+            if tabelas is not None:
+                tabelas = pd.concat([tabelas, tabela])
+            else:
+                tabelas = tabela
+
+        tabelas['Valor Disponibilizado (R$)'] = tabelas['Valor Disponibilizado (R$)'].apply(g.format_valor)
+        tabelas = tabelas.groupby(['Valor Disponibilizado (R$)', 'Data'], as_index=False)['UF'].count()
+        tabelas = tabelas.rename(columns={'UF': 'Quantidade'})
+        # tabela['Valor Disponibilizado (R$)'] = tabela['Valor Disponibilizado (R$)'].apply(
+        #     lambda x: format_currency(int(x)/100, currency="", locale="pt_br") if str(x).find(",") is -1 else x)
+
+        print(tabelas)
+        data = g.get_context_data(tabelas)
 
         return render(request, "polls/analise.html", {'data': data, municipio: "selected", "de": de, "ate": ate})
     else:
