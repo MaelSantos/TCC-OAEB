@@ -158,14 +158,16 @@ def analise(request):
             data = g.get_context_valor(tabelas)
         else:
             tabela = []
-            for cidade in ["Triunfo", "Calumbi", "Floresta", "Mirandiba", "Santa Cruz da Baixa Verde",
-                           "Serra Talhada", "Sao Jose do Belmonte"]:
-                for periodo in range(int(periodo_de), int(periodo_ate) + 1):
-                    periodo = str(periodo)
-                    periodo = periodo[0:4] + "-" + periodo[4::]
+            for periodo in range(int(periodo_de), int(periodo_ate) + 1):
+                periodo = str(periodo)
+                periodo = periodo[0:4] + "-" + periodo[4::]
 
-                    total = c.buscar_auxilio_total(cidade=cidade.replace(" ", "+").upper(), periodoDe=periodo, periodoAte=periodo)
-                    tabela.append([cidade, total, periodo])
+                for cidade in ["Triunfo", "Calumbi", "Floresta", "Mirandiba", "Santa Cruz da Baixa Verde",
+                               "Serra Talhada", "Sao Jose do Belmonte"]:
+
+                    print(f"Cidade: {cidade} - Mês: {periodo}")
+                    total = c.buscar_auxilio_total(cidade=cidade.replace(" ", "_").upper(), periodoDe=periodo, periodoAte=periodo)
+                    tabela.append([cidade, total, periodo+"-30"])
 
             tabelas = pd.DataFrame(tabela, columns=["Município", "Total", "Data"])
             print(tabelas)

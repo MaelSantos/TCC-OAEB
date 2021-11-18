@@ -44,7 +44,12 @@ class Crawler:
         select = Select(driver.find_element(tipo, nome))
         select.select_by_value(valor)  # seleciona a uf PE
 
-    def cruzar_auxilios_total(self, url):
+    def inserir_input(self, driver, nome, identificador, tipo="id"):
+        elemento_nome = driver.find_element(tipo, identificador)
+        elemento_nome.clear()
+        elemento_nome.send_keys(nome)
+
+    def cruzar_auxilios_total(self, url, cidade):
         driver = self.criar_crawler()
 
         print(url)
@@ -53,7 +58,15 @@ class Crawler:
         body = driver.find_element(By.ID, "lista").find_element(By.XPATH, "tbody").text
         if "Nenhum registro encontrado" in body:
             driver.refresh()  # evitar erros da pagina do auxilio
-            time.sleep(4)
+            time.sleep(5)
+
+        driver.find_element(By.XPATH, "//button[contains(text(), 'Município')]").click()
+        time.sleep(2)
+        self.inserir_input(driver, cidade, "nomeMunicipio")
+        driver.find_elements(By.CLASS_NAME, "btn-gaveta-consultar")[2].click()
+        time.sleep(2)
+        driver.find_element(By.CLASS_NAME, "btn-filtros-aplicados-consultar").click()
+        time.sleep(5)
 
         driver.find_element(By.CLASS_NAME, "botao__gera_paginacao_completa").click()  # exibe toda a paginação
         time.sleep(5)
@@ -67,10 +80,10 @@ class Crawler:
         driver.find_element(By.XPATH, f"//a[contains(text(), '{total}')]").click()
         time.sleep(5)
 
-        total_ultima = len(driver.find_elements(By.TAG_NAME, "tr"))-1
+        total_ultima = len(driver.find_elements(By.TAG_NAME, "tr")) - 1
         print(total_ultima)
 
-        return ((int(total)-1) * 50)+total_ultima
+        return ((int(total) - 1) * 50) + total_ultima
 
     def cruzar_auxilios(self, url):
         driver = self.criar_crawler()

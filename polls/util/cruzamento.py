@@ -1,6 +1,5 @@
 from polls.crawler.crawler import Crawler
 import pandas as pd
-import numpy as np
 
 
 class Cruzamento:
@@ -32,7 +31,7 @@ class Cruzamento:
         table = table.drop(columns=['Detalhar'])
         return table
 
-    def buscar_auxilio_total(self, cidade="SANTA+CRUZ+DA+BAIXA+VERDE", periodoDe="2020-01", periodoAte="2020-01"):
+    def buscar_auxilio_total(self, cidade, periodoDe="2020-01", periodoAte="2020-01"):
         periodoDe = periodoDe.split("-")
         periodoAte = periodoAte.split("-")
         de = "&de=01%2F" + periodoDe[1] + "%2F" + periodoDe[0]
@@ -40,7 +39,7 @@ class Cruzamento:
         estado = "&uf=PE&nomeMunicipio=" + cidade.replace("_", "+")
 
         urlFinal = self.url_auxilio + de + ate + estado
-        total = self.crawler.cruzar_auxilios_total(urlFinal)
+        total = self.crawler.cruzar_auxilios_total(urlFinal, cidade.replace("_", " "))
         return total
 
     def buscar_prefeitura(self, nome="", cidade=""):
