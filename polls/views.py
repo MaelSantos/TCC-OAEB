@@ -137,7 +137,7 @@ def analise(request):
             periodo_ate = ate.replace("-", "")
 
         tabelas = None
-        if tipoGrafico == "":
+        if tipoGrafico == "valor":
             for periodo in range(int(periodo_de), int(periodo_ate) + 1):
                 periodo = str(periodo)
                 periodo = periodo[0:4] + "-" + periodo[4::]
@@ -167,7 +167,7 @@ def analise(request):
 
                     print(f"Cidade: {cidade} - Mês: {periodo}")
                     total = c.buscar_auxilio_total(cidade=cidade.replace(" ", "_").upper(), periodoDe=periodo, periodoAte=periodo)
-                    tabela.append([cidade, total, periodo+"-30"])
+                    tabela.append([cidade, total, periodo+"-01"])
 
             tabelas = pd.DataFrame(tabela, columns=["Município", "Total", "Data"])
             print(tabelas)

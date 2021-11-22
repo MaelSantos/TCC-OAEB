@@ -25,7 +25,7 @@ class Cruzamento:
             urlFinal = self.url_bolsa + de + ate + estado + nis + nome
         else:
             urlFinal = self.url_auxilio + de + ate + estado + nis + nome
-        html = self.crawler.cruzar_auxilios(urlFinal)
+        html = self.crawler.cruzar_auxilios(urlFinal, cidade.replace("+", " "))
 
         table = pd.read_html(html)[0]
         table = table.drop(columns=['Detalhar'])

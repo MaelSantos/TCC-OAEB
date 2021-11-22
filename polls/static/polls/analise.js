@@ -7,10 +7,8 @@ function regraGraficos(){
 
     if(tipo == "total"){
         $("#divMunicipio").hide();
-        $("#divPeriodo").hide();
     }else{
         $("#divMunicipio").show();
-        $("#divPeriodo").show();
     }
 
 }
