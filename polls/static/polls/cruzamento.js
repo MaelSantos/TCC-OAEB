@@ -72,10 +72,12 @@ function carregarDados(){
             $.alert("Para realizar um cruzamento com essa opção de orgão deve-se informar obrigatoriamente um nome com no mínimo 3 caracteres.");
             return;
         }
+
+    getResponse();
     $('#progresso').show();
     $(".dataframe").hide();
     $("#salvar").hide();
-    $("#buscar").click();
+//    $("#buscar").click();
 }
 
 function salvarPdf(){
@@ -83,6 +85,22 @@ function salvarPdf(){
     $("#htmlstring").val(html);
     $("#salvar").click();
 }
+
+function getResponse() {
+    $('#loadingModal_content').html('Carregando...');
+    $('#loadingModal').modal('show');
+
+}
+
+function displayMsgCarregamento() {
+    const arrayMensagens = ['Aguarde', 'Estamos Preparando Resultados','Carregando', 'Extraindo Dados', 'Gerando Tabelas',
+    'Estamos Quase Prontos', 'Em Andamento', 'Coletando Informações'];
+    const msgModalCarregamento = arrayMensagens[Math.floor(Math.random() * arrayMensagens.length)];
+
+   document.getElementById('loadingModal_content').textContent = msgModalCarregamento+"...";
+}
+
+const criarCarregamento = setInterval(displayMsgCarregamento, 10*1000);
 
 $(document).ready(function(){
     $('[data-bs-toggle="popover"]').popover();

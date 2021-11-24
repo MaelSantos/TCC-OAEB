@@ -6,6 +6,42 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.js"></script>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.0/css/all.min.css"/>
+
+    <style>
+
+        /*Regra para a animacao*/
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /*Mudando o tamanho do icone de resposta*/
+        div.glyphicon {
+            color: #6B8E23;
+            font-size: 38px;
+        }
+
+         /*Classe que mostra a animacao 'spin'*/
+        .loader {
+            border: 16px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 16px solid #3498db;
+            width: 80px;
+            height: 80px;
+            -webkit-animation: spin 2s linear infinite;
+            animation: spin 2s linear infinite;
+        }
+
+<!--        .modal-content {-->
+<!--            opacity: 0.5 !important;-->
+<!--        }-->
+    </style>
+
 {% endblock %}
 
 {% block titulo %}Web Crawling{% endblock %}
@@ -111,9 +147,7 @@
     </div>
 
     <div class="d-flex justify-content-center">
-        <div class="spinner-border" role="status" id="progresso">
-            <span class="sr-only">Carregando Dados...</span>
-        </div>
+
     </div>
 
 {% endblock %}
@@ -131,5 +165,25 @@
             {{ data | safe }}
         </div>
     {% endif %}
+
+    <div class="ui mini modal" >
+        <div class="ui form" id="loadingModal_label" style="margin: 30px;">
+
+        </div>
+    </div>
+
+<div class="modal fade" tabindex="-1" id="loadingModal" data-bs-backdrop="static" data-bs-keyboard="false" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="content m-5">
+                <center>
+                    <div class="loader" id="loader"></div><br>
+                    <h4><b id="loadingModal_content"></b></h4>
+                </center>
+            </div>
+        </div>
+    </div>
+</div>
+
     <script src="{% static 'polls/cruzamento.js' %}"></script>
 {% endblock %}
