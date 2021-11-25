@@ -2,6 +2,37 @@
 {% load static %}
 
 {% block links %}
+    <style>
+
+        /*Regra para a animacao*/
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /*Mudando o tamanho do icone de resposta*/
+        div.glyphicon {
+            color: #6B8E23;
+            font-size: 38px;
+        }
+
+         /*Classe que mostra a animacao 'spin'*/
+        .loader {
+            border: 16px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 16px solid #3498db;
+            width: 80px;
+            height: 80px;
+            -webkit-animation: spin 2s linear infinite;
+            animation: spin 2s linear infinite;
+        }
+
+    </style>
 {% endblock %}
 
 {% block titulo %}Web Crawling{% endblock %}
@@ -41,7 +72,8 @@
             <input type="month" class="form-control" id="ate" name="ate" value="{{ ate }}" placeholder="Até">
         </div>
 
-        <button type="submit" id="buscar" class="btn btn-primary">Procurar</button>
+        <button type="button" class="btn btn-primary" onclick="carregarDados()">Procurar</button>
+        <button type="submit" id="buscar" style="display: none;"> </button>
     </form>
 
 {% endblock %}
@@ -51,7 +83,18 @@
         {{ data | safe }}
     {% endif %}
 
-<!--        <div class="d-flex justify-content-center justify-content-lg-between p-4 border-bottom" id="tabelaDados">-->
-<!--        </div>-->
+    <div class="modal fade" tabindex="-1" id="loadingModal" data-bs-backdrop="static" data-bs-keyboard="false" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="content m-5">
+                    <center>
+                        <div class="loader" id="loader"></div><br>
+                        <h4><b id="loadingModal_content"></b></h4>
+                    </center>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="{% static 'polls/analise.js' %}"></script>
 {% endblock %}

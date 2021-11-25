@@ -37,9 +37,6 @@
             animation: spin 2s linear infinite;
         }
 
-<!--        .modal-content {-->
-<!--            opacity: 0.5 !important;-->
-<!--        }-->
     </style>
 
 {% endblock %}
@@ -166,24 +163,18 @@
         </div>
     {% endif %}
 
-    <div class="ui mini modal" >
-        <div class="ui form" id="loadingModal_label" style="margin: 30px;">
-
-        </div>
-    </div>
-
-<div class="modal fade" tabindex="-1" id="loadingModal" data-bs-backdrop="static" data-bs-keyboard="false" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="content m-5">
-                <center>
-                    <div class="loader" id="loader"></div><br>
-                    <h4><b id="loadingModal_content"></b></h4>
-                </center>
+    <div class="modal fade" tabindex="-1" id="loadingModal" data-bs-backdrop="static" data-bs-keyboard="false" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="content m-5">
+                    <center>
+                        <div class="loader" id="loader"></div><br>
+                        <h4><b id="loadingModal_content"></b></h4>
+                    </center>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
     <script src="{% static 'polls/cruzamento.js' %}"></script>
 {% endblock %}
