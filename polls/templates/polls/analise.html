@@ -1,48 +1,80 @@
 {% extends "polls/menu.html" %}
+{% block inicio %}active{% endblock %}
 {% load static %}
-
-{% block links %}
-{% endblock %}
-
-{% block titulo %}Web Crawling{% endblock %}
-
-{% block analise %}active{% endblock %}
 
 {% block content %}
 
-    <form method="POST" class="form-signin" action="/polls/analise/">
-        {% csrf_token %}
+<header id="head" class="secondary" style="margin-bottom: 50px;"></header>
 
-        <div class="form-group mb-3">
-            <label for="tipoGrafico">Tipo Gráfico:</label>
-            <select class="form-select" name="tipoGrafico" id="tipoGrafico" onchange="regraGraficos(this)" required>
-                <option value="valor" {{ valor }}>Mês vs Valor</option>
-                <option value="total" {{ total }}>Cidades vs Total</option>
-            </select>
+<div class="col col-md-3"></div>
+    <div class="max-100 max-vh-100 d-flex align-items-center">
+        <!-- container -->
+        <div class="container">
+            <div class="row justify-content-center align-self-center">
+                <div class="col col-md-6 col-xl-5 my-auto">
+                    <div class="p-5 border-shadow">
+                        <form method="POST" class="form-signin" action="/polls/analise/">
+                            <input for="inputdefault" type="hidden" name="csrfmiddlewaretoken" value="R0J5iatQRU1n9WMNDbCU8D8D0oIlDsy6ZfE4RHz4aQRutcJKn4VGyP68m2XXQH8M">
+                            <div class="form-group mb-3">
+                                <div class="row">
+                                    <div class="col col-md-12 d-flex">
+                                        <div class="col-md-8">
+                                            <label for="tipoGrafico"  class="form-label">Tipo Gráfico:</label>
+                                            <select for="inputdefault" class="form-control" name="tipoGrafico" id="tipoGrafico" onchange="regraGraficos(this)" required>
+                                                <option value="valor" >Mês vs Valor</option>
+                                                <option value="total" >Cidades vs Total</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group mb-3" id="divMunicipio">
+                                <div class="row">
+                                    <div class="col col-md-12 d-flex">
+                                        <div class="col-md-8">
+                                            <label for="municipio" class="form-label">Município:</label>
+                                            <select for="inputdefault" class="form-control" name="municipio" id="municipio" required>
+                                                <option value="SANTA_CRUZ_DA_BAIXA_VERDE" >Santa Cruz da Baixa Verde</option>
+                                                <option value="SERRA_TALHADA" >Serra Talhada</option>
+                                                <option value="TRIUNFO" >Triunfo</option>
+                                                <option value="CALUMBI" > Calumbi</option>
+                                                <option value="FLORESTA" >Floresta</option>
+                                                <option value="MIRANDIBA" >Mirandiba</option>
+                                                <option value="SAO_JOSE_DO_BELMONTE" >São José do Belmonte</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group mb-3" id="divPeriodo">
+                                <div class="row">
+                                    <div class="col col-md-12 d-flex justify-content-lg-between">
+                                        <div class="col-md-6">
+                                            <label for="de" class="form-label">De:</label>
+                                            <input for="inputdefault" type="month" class="form-control" id="de" name="de" value="" placeholder="De">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="ate" class="form-label">Até:</label>
+                                            <input for="inputdefault" type="month" class="form-control" id="ate" name="ate" value="" placeholder="Até">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div style="display: flex; justify-content:  center; margin-top: 30px;">
+                                <button type="submit" id="buscar" class="btn btn-primary">Procurar</button>
+                            </div>
+
+                        </form>
+                    </div>
+                </div>
+            </div>
         </div>
-
-        <div class="form-group mb-3" id="divMunicipio">
-            <label for="municipio">Município:</label>
-            <select class="form-select" name="municipio" id="municipio" required>
-                <option value="SANTA_CRUZ_DA_BAIXA_VERDE" {{ SANTA_CRUZ_DA_BAIXA_VERDE }}>Santa Cruz da Baixa Verde</option>
-                <option value="SERRA_TALHADA" {{ SERRA_TALHADA }}>Serra Talhada</option>
-                <option value="TRIUNFO" {{ TRIUNFO }}>Triunfo</option>
-                <option value="CALUMBI" {{ CALUMBI }}> Calumbi</option>
-                <option value="FLORESTA" {{ FLORESTA }}>Floresta</option>
-                <option value="MIRANDIBA" {{ MIRANDIBA }}>Mirandiba</option>
-                <option value="SAO_JOSE_DO_BELMONTE" {{ SAO_JOSE_DO_BELMONTE }}>São José do Belmonte</option>
-            </select>
-        </div>
-
-        <div class="form-group mb-3" id="divPeriodo" style="display: flex;">
-            <label for="de" class="p-2">De:</label>
-            <input type="month" class="form-control" id="de" name="de" value="{{ de }}" placeholder="De">
-            <label for="ate" class="p-2">Até:</label>
-            <input type="month" class="form-control" id="ate" name="ate" value="{{ ate }}" placeholder="Até">
-        </div>
-
-        <button type="submit" id="buscar" class="btn btn-primary">Procurar</button>
-    </form>
+        <!-- /container -->
+    </div>
+</div>
 
 {% endblock %}
 
@@ -51,7 +83,18 @@
         {{ data | safe }}
     {% endif %}
 
-<!--        <div class="d-flex justify-content-center justify-content-lg-between p-4 border-bottom" id="tabelaDados">-->
-<!--        </div>-->
+    <div class="modal fade" tabindex="-1" id="loadingModal" data-bs-backdrop="static" data-bs-keyboard="false" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="content m-5">
+                    <center>
+                        <div class="loader" id="loader"></div><br>
+                        <h4><b id="loadingModal_content"></b></h4>
+                    </center>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="{% static 'polls/analise.js' %}"></script>
 {% endblock %}

@@ -12,7 +12,7 @@ crawler = Crawler()
 
 
 def index(request):
-    return render(request, 'polls/principal.html')
+    return render(request, 'polls/index.html')
 
 
 def busca(request):
@@ -50,8 +50,8 @@ def buscar(request):
         return redirect('buscar')
 
 
-def bolsa_famila(request):
-    return render(request, "polls/bolsa_familia.html")
+def contatos(request):
+    return render(request, "polls/contatos.html")
 
 
 def cruzamento(request):

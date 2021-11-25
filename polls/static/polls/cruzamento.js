@@ -77,7 +77,7 @@ function carregarDados(){
     $('#progresso').show();
     $(".dataframe").hide();
     $("#salvar").hide();
-//    $("#buscar").click();
+    $("#buscar").click();
 }
 
 function salvarPdf(){
@@ -89,7 +89,6 @@ function salvarPdf(){
 function getResponse() {
     $('#loadingModal_content').html('Carregando...');
     $('#loadingModal').modal('show');
-
 }
 
 function displayMsgCarregamento() {

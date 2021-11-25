@@ -1,104 +1,68 @@
 <!DOCTYPE html>
+{% load static %}
 <html lang="pt-br">
-
 <head>
-    <meta charset="UTF-8">
+    <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="OAEB - Observatório do Auxílio Emergencial do Brasil.">
+    <meta name="author" content="">
+    <title>OAEB - Observatório do Auxílio Emergencial do Brasil</title>
+    <link rel="shortcut icon" href="{% static 'polls/assets/images/favicon.png' %}"/>
+    <link rel="stylesheet" media="screen" href="http://fonts.googleapis.com/css?family=Open+Sans:300,400,700">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="{% static 'polls/assets/css/bootstrap-theme.css' %}" media="screen">
+    <link rel="stylesheet" type="text/css" href="{% static 'polls/assets/css/da-slider.css' %}" />
+    <link rel="stylesheet" href="{% static 'polls/assets/css/style.css' %}">
+
     <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous">
     </script>
-    {% block links %}{% endblock %}
-    <title>{% block titulo %}{% endblock %}</title>
-
-    <style type="text/css">
-
-        .column {
-            max-width: 600px;
-        }
-
-    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.0/css/all.min.css"/>
 
 </head>
+<body>
+    <!-- Fixed navbar -->
 
-<body class="m-2">
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <a class="navbar-brand" href="">Cruzamento AE</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
-            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav">
-                {% if menu != None %}
-                    <li class="nav-item">
-                        <a href="" class="nav-link {% block login %}{% endblock %}">Login</a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="" class="nav-link {% block cadastro %}{% endblock %}">Cadastro</a>
-                    </li>
-                {% else %}
-                    <li class="nav-item">
-                        <a href="/polls/" class="nav-link {% block inicio %}{% endblock %}">Inicio</a>
-                    </li>
-<!--                    <li class="nav-item">-->
-<!--                        <a href="/polls/beneficiarios/" class="nav-link {% block beneficiarios %}{% endblock %}">Busca de dados</a>-->
-<!--                    </li>-->
-<!--                    <li class="nav-item">-->
-<!--                        <a href="/polls/bolsa-familia/" class="nav-link {% block bolsa_familia %}{% endblock %}">Teste local</a>-->
-<!--                    </li>-->
+<nav class="navbar navbar-expand-lg navbar-inverse">
+<!--            <nav class="navbar navbar-expand-lg navbar-light bg-light">-->
 
-                    <li class="nav-item">
-                        <a href="/polls/cruzamento/auxilios/" class="nav-link {% block cruzamento %}{% endblock %}">Cruzamento de dados</a>
-                    </li>
+    <div class="container">
 
-                    <li class="nav-item">
-                        <a href="/polls/analise/" class="nav-link {% block analise %}{% endblock %}">Análises</a>
-                    </li>
+        <div class="navbar-header">
+            <!-- Button for smallest screens -->
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse"><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button>
+            <a class="navbar-brand" href="/polls/">
+                <img src="{% static 'polls/assets/images/logo.png' %}" alt="OAEB HTML5 template"></a>
+        </div>
+        <div class="navbar-collapse collapse d-flex justify-content-end">
+            <ul class="nav navbar-nav pull-right">
+                <li class="nav-item">
+                    <a class="nav-link {% block index %}{% endblock %}" href="/polls/">Início</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% block cruzamento %}{% endblock %}" href="/polls/cruzamento/auxilios/">Cruzamento de dados</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% block analise %}{% endblock %}" href="/polls/analise/">Análises</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% block contato %}{% endblock %}" href="/polls/contatos/">Contato</a>
+                </li>
 
-<!--                    <li class="nav-item dropdown">-->
-<!--                        <a class="nav-link {% block busca %}{% endblock %} dropdown-toggle" href="#" id="navbarDropdown"-->
-<!--                            role="button" data-bs-toggle="dropdown" aria-expanded="false">-->
-<!--                            Cruzamento de dados-->
-<!--                        </a>-->
-<!--                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">-->
-<!--                            <li><a class="dropdown-item" href="/polls/cruzamento/auxilios/">Auxílios (BF x AE)</a></li>-->
-<!--                            <li><a class="dropdown-item" href="">Prefeituras x AE</a></li>-->
-<!--                        </ul>-->
-<!--                    </li>-->
-
-                {% endif %}
             </ul>
         </div>
-<!--        <ul class="navbar-nav">-->
-<!--            <li class="nav-item">-->
-<!--                <a href="" class="nav-link">Sair</a>-->
-<!--            </li>-->
-<!--        </ul>-->
-    </nav>
 
-<!--    <div class="ui divider"></div>-->
-
-    <div class="d-flex justify-content-center justify-content-lg-between border-bottom mt-5">
-        <div class="container" id="login">
-            <div class="row justify-content-center mb-5">
-                <div class='w-50'>
-
-                    <h1 class="ui header">
-                        {% block tituloo %}{% endblock %}
-                    </h1>
-
-                    {% block content %}{% endblock %}
-                </div>
-            </div>
-        </div>
     </div>
+</nav>
 
-    {% block optional %}{% endblock %}
+{% block content %}{% endblock %}
+{% block optional %}{% endblock %}
 
-    {% include 'polls/footer.html' %}
+{% include 'polls/footer.html' %}
+
 </body>
-
 </html>
