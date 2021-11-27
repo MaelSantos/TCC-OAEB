@@ -36,14 +36,23 @@ label {
 /* Header */
 #head {
     background: #181015 url( ../images/bg_header.jpg) no-repeat;
+    backdrop-filter: brightness(50%) !important;
     background-size: cover;
-    min-height: 520px;
+    min-height: 400px;
     text-align: center;
     color: white;
     font-weight: 300;
     position: relative;
-    filter: brightness(50%);
+    /*filter: brightness(50%);*/
 }
+    /*.container-image {
+        background: #181015 url( ../images/bg_header.jpg) no-repeat;
+        backdrop-filter: brightness(50%) !important;
+        background-size: cover;
+        min-height: 400px;
+        position: relative;
+        filter: brightness(50%);
+    }*/
 
     #head.secondary {
         height: 100px;
@@ -685,4 +694,32 @@ background-size:initial;
     font-size:19px;
     font-weight:400;
     }
+}
+
+/*Regra para a animacao*/
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/*Mudando o tamanho do icone de resposta*/
+div.glyphicon {
+    color: #6B8E23;
+    font-size: 38px;
+}
+
+ /*Classe que mostra a animacao 'spin'*/
+.loader {
+    border: 16px solid #f3f3f3;
+    border-radius: 50%;
+    border-top: 16px solid #3498db;
+    width: 80px;
+    height: 80px;
+    -webkit-animation: spin 2s linear infinite;
+    animation: spin 2s linear infinite;
 }

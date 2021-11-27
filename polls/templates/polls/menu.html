@@ -17,26 +17,20 @@
     <link rel="stylesheet" href="{% static 'polls/assets/css/style.css' %}">
 
     <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous">
-    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.0/css/all.min.css"/>
-
+    {% block links %}{% endblock %}
 </head>
 <body>
-    <!-- Fixed navbar -->
 
+<!-- Fixed navbar -->
 <nav class="navbar navbar-expand-lg navbar-inverse">
-<!--            <nav class="navbar navbar-expand-lg navbar-light bg-light">-->
-
     <div class="container">
 
         <div class="navbar-header">
-            <!-- Button for smallest screens -->
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse"><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button>
             <a class="navbar-brand" href="/polls/">
-                <img src="{% static 'polls/assets/images/logo.png' %}" alt="OAEB HTML5 template"></a>
+                <img src="{% static 'polls/assets/images/logo.png' %}" alt="OAEB HTML5 template">
+            </a>
         </div>
         <div class="navbar-collapse collapse d-flex justify-content-end">
             <ul class="nav navbar-nav pull-right">
