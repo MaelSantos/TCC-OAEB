@@ -20,13 +20,12 @@
                 <header class="page-header">
                     <h1 class="page-title">Cruzamento entre Base de Dados</h1>
                 </header>
-                <h3>Texto observatorio</h3>
+                <h3>Sobre o Cruzamento</h3>
                 <p>
-                    <!-- <img src="assets/images/about.jpg" alt="" class="img-rounded pull-right" width="300"> -->
-                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eveniet, consequuntur eius repellendus eos aliquid molestiae ea laborum ex Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eveniet, consequuntur eius repellendus eos aliquid molestiae ea laborum ex quibusdam laudantium voluptates placeat consectetur quam aliquam beatae soluta accusantium iusto nihil nesciunt unde veniam magnam repudiandae sapiente.</p>
-                <p>Consectetur adipisicing elit. Eveniet, consequuntur eius repellendus eos aliquid molestiae ea laborum ex quibusdam laudantium voluptates placeat consectetur quam aliquam beatae soluta accusantium iusto nihil nesciunt unde veniam magnam repudiandae sapiente.</p>
-                <h3>Company Goals</h3>
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eveniet, consequuntur eius repellendus eos aliquid molestiae ea laborum ex quibusdam laudantium voluptates placeat consectetur quam aliquam beatae soluta accusantium iusto nihil nesciunt unde veniam magnam repudiandae sapiente. consequuntur eius repellendus eos aliquid molestiae ea laborum ex quibusdam laudantium voluptates placeat consectetur quam aliquam!</p>
+                    O cruzamento de dados é realizado entre uma base de dados principal e uma secundária, no qual pode-se selecionar entre as bases do Auxilio Emergencial, Bolsa Família, Órgãos de Classe e Prefeituras. A base principal e a base secundária não podem ser iguais. São aceitos dois tipos de cruzamentos por interseção e por diferença. O cruzamento por interseção retorna os dados de pessoas que estejam presentes em ambas as bases selecionadas, no entanto, no cruzamento por diferença esses dados são retornados, de modo que, estejam presentes na base principal, porém não estejam presentes na base secundária.
+                </p>
+                <p>Ao selecionar a base dos Órgãos de Classe, é disponibilizado a opção de seleção de qual órgão deve ser utilizado para realizar o cruzamento.</p>
+                <p>Utilize os filtros disponíveis para encontrar resultados mais precisos.</p>
             </section>
             <!-- /main -->
 
@@ -50,7 +49,7 @@
                                                 <option value=""></option>
                                                 <option value="auxilio" {{ auxilio }}>Auxílio Emergencial</option>
                                                 <option value="bolsa" {{ bolsa }}>Bolsa Família</option>
-                                                <option value="orgao" {{ orgao }}>Orgãos de Classe</option>
+                                                <option value="orgao" {{ orgao }}>Órgãos de Classe</option>
                                                 <option value="prefeitura" {{ prefeitura }}>Prefeitura</option>
                                             </select>
                                         </div>
@@ -62,7 +61,7 @@
                                                 <option value=""></option>
                                                 <option value="auxilio" {{ auxilio2 }}>Auxílio Emergencial</option>
                                                 <option value="bolsa" {{ bolsa2 }}>Bolsa Família</option>
-                                                <option value="orgao" {{ orgao2 }}>Orgãos de Classe</option>
+                                                <option value="orgao" {{ orgao2 }}>Órgãos de Classe</option>
                                                 <option value="prefeitura" {{ prefeitura2 }}>Prefeitura</option>
                                             </select>
                                         </div>
@@ -85,7 +84,7 @@
                                 </div>
                                 <div class="col-md-8 col-sm-8 col-xs-12">
                                     <div class="form-group mb-3" id="divOrgaos">
-                                        <label for="orgaos">Orgãos de Classe:</label>
+                                        <label for="orgaos">Órgãos de Classe:</label>
                                         <select class="form-control form-select" name="orgaos" id="orgaos">
                                             <option value="medicina" {{ medicina }}>Medicina (CFM)</option>
                                             <option value="advocacia" {{ advocacia }}>Advocacia (AOB)</option>

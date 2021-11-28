@@ -73,6 +73,7 @@ class Cruzamento:
 
     def buscar_bases(self, base, nome="", nis="", cidade="", periodoDe="2020-01", periodoAte="2020-12", orgaos=""):
         cidade = cidade.replace("_", "+")
+        cidade = cidade.replace(" ", "+")
         if base == "auxilio":
             table = self.buscar_auxilio_bolsa(cidade=cidade, nome=nome, nis=nis, bolsa=False, periodoDe=periodoDe, periodoAte=periodoAte)
         elif base == "bolsa":

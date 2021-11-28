@@ -6,6 +6,27 @@
 
 <header id="head" class="secondary" style="margin-bottom: 50px;"></header>
 
+    <!-- container -->
+    <div class="container">
+        <div class="row">
+
+            <!-- main content -->
+            <section class="col-sm-12 maincontent">
+                <header class="page-header">
+                    <h1 class="page-title">Análise do Auxilio Emergencial</h1>
+                </header>
+                <h3>Sobre a Análise</h3>
+                <p>
+                    A analise consistem em coletar as informações presentes no Portal da Transparência do Auxilio Emergencial e por meio deles gerar gráficos de fácil entendimento.
+                    Informe o nome do município completo para evitar erros.
+                </p>
+            </section>
+            <!-- /main -->
+
+        </div>
+    </div>
+    <!-- /container -->
+
 <div class="col col-md-3"></div>
     <div class="max-100 max-vh-100 d-flex align-items-center">
         <!-- container -->
@@ -36,15 +57,17 @@
                                     <div class="col col-md-12 d-flex">
                                         <div class="col-md-8">
                                             <label for="municipio" class="form-label">Município:</label>
-                                            <select for="inputdefault" class="form-control" name="municipio" id="municipio" required>
-                                                <option value="SANTA_CRUZ_DA_BAIXA_VERDE" {{ SANTA_CRUZ_DA_BAIXA_VERDE }}>Santa Cruz da Baixa Verde</option>
-                                                <option value="SERRA_TALHADA" {{ SERRA_TALHADA }} >Serra Talhada</option>
-                                                <option value="TRIUNFO" {{ TRIUNFO }} >Triunfo</option>
-                                                <option value="CALUMBI" {{ CALUMBI }} > Calumbi</option>
-                                                <option value="FLORESTA" {{ FLORESTA }} >Floresta</option>
-                                                <option value="MIRANDIBA" {{ MIRANDIBA }} >Mirandiba</option>
-                                                <option value="SAO_JOSE_DO_BELMONTE" {{ SAO_JOSE_DO_BELMONTE }} >São José do Belmonte</option>
-                                            </select>
+<!--                                            <select for="inputdefault" class="form-control" name="municipio" id="municipio" required>-->
+<!--                                                <option value="SANTA_CRUZ_DA_BAIXA_VERDE" {{ SANTA_CRUZ_DA_BAIXA_VERDE }}>Santa Cruz da Baixa Verde</option>-->
+<!--                                                <option value="SERRA_TALHADA" {{ SERRA_TALHADA }} >Serra Talhada</option>-->
+<!--                                                <option value="TRIUNFO" {{ TRIUNFO }} >Triunfo</option>-->
+<!--                                                <option value="CALUMBI" {{ CALUMBI }} > Calumbi</option>-->
+<!--                                                <option value="FLORESTA" {{ FLORESTA }} >Floresta</option>-->
+<!--                                                <option value="MIRANDIBA" {{ MIRANDIBA }} >Mirandiba</option>-->
+<!--                                                <option value="SAO_JOSE_DO_BELMONTE" {{ SAO_JOSE_DO_BELMONTE }} >São José do Belmonte</option>-->
+<!--                                            </select>-->
+                                            <input type="text" class="form-control" id="municipio" name="municipio"
+                                            value="{{ municipio }}" placeholder="Município">
                                         </div>
                                     </div>
                                 </div>

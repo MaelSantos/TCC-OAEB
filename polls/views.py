@@ -173,6 +173,6 @@ def analise(request):
             print(tabelas)
             data = g.get_context_total(tabelas)
 
-        return render(request, "polls/analise.html", {'data': data, municipio: "selected", tipoGrafico: "selected", "de": de, "ate": ate})
+        return render(request, "polls/analise.html", {'data': data, "municipio": municipio, tipoGrafico: "selected", "de": de, "ate": ate})
     else:
         return render(request, "polls/analise.html")

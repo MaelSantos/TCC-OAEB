@@ -21,7 +21,7 @@ function regraBases(){
         $('#alerta').hide();
     }
 
-    if(base1 == "Orgãos de Classe" || base2 == "Orgãos de Classe")
+    if(base1 == "Órgãos de Classe" || base2 == "Órgãos de Classe")
         $('#divOrgaos').show();
     else
         $('#divOrgaos').hide();
@@ -110,7 +110,7 @@ $(document).ready(function(){
     } else
         $('#divPeriodo').show();
 
-    if($("#base1 option:selected").text() == "Orgãos de Classe" || $("#base3 option:selected").text() == "Orgãos de Classe")
+    if($("#base1 option:selected").text() == "Órgãos de Classe" || $("#base3 option:selected").text() == "Órgãos de Classe")
         $('#divOrgaos').show();
     else
         $('#divOrgaos').hide();
