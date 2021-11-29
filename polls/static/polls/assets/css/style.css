@@ -33,28 +33,29 @@ label {
     color: #777;
 }
 
+.logo{
+    position: relative;
+    min-height: 400px;
+}
+
 /* Header */
 #head {
-    background: #181015 url( ../images/mapa2.png) no-repeat center;
-    backdrop-filter: brightness(50%) !important;
     background-size: cover;
     min-height: 400px;
     text-align: center;
     color: white;
     font-weight: 300;
     position: relative;
-
-    /*filter: brightness(50%);*/
 }
     .container-image {
-
+        background: black url( ../images/mapa2.png) no-repeat center;
+        backdrop-filter: brightness(50%) !important;
         filter: brightness(50%);
-        background-size: cover;
-        height: 100%;
-        width: 100%;
-        position: relative;
-        width: auto;
-        height: auto;
+        background-size: contain;
+        min-height: 400px;
+        position: absolute;
+        left: 0;
+        right: 0;
     }
 
     #head.secondary {
