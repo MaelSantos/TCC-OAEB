@@ -33,18 +33,19 @@
     </div>
     <!-- /container -->
     <section class="team-content">
-        <div class="container">
-            <div class="row justify-content-center align-self-center">
-                <div class="col col-md-8 col-xl-6 my-auto">
+        <div class="container max-100 max-vh-100">
+<!--            <div class="row">-->
+                <div class="col-md-6 col-sm-8 col-xl-5 my-auto">
                     <!-- <div class="p-5 border-shadow"> -->
-                        <div class="row" style="margin-top: 50px;">
+                        <div class="row mt-4">
                             <form method="POST" class="form-signin" action="/polls/cruzamento/auxilios/busca/">
                                 {% csrf_token %}
 
-                                <div class="d-flex justify-content-between">
-                                    <div class="col-md-5 col-sm-6 col-xs-6">
+                                <div class="col-md-12 col-sm-12 col-xl-12 d-flex">
+                                    <div class="col col-md-6 col-sm-6 col-xl-6 me-1">
+                                         <label for="base1">Base Principal:</label>
                                         <div class="form-group mb-3">
-                                            <label for="base1">Base Principal:</label>
+
                                             <select class="form-control form-select" id="base1" name="base1" onchange="regraBases()" required>
                                                 <option value=""></option>
                                                 <option value="auxilio" {{ auxilio }}>Auxílio Emergencial</option>
@@ -54,9 +55,10 @@
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="col-md-5 col-sm-6 col-xs-6">
+                                    <div class="col col-md-6 col-sm-6 col-xl-6">
+                                        <label for="base2">Base Secundária:</label>
                                         <div class="form-group mb-3">
-                                            <label for="base2">Base Secundária:</label>
+
                                             <select class="form-control form-select" id="base2" name="base2" onchange="regraBases()">
                                                 <option value=""></option>
                                                 <option value="auxilio" {{ auxilio2 }}>Auxílio Emergencial</option>
@@ -68,7 +70,7 @@
                                     </div>
                                 </div>
 
-                                <div class="col-md-8 col-sm-8 col-xs-12">
+                                <div class="col col-md-12 col-sm-12 col-xl-12">
                                     <div class="form-group mb-3">
                                         <label for="municipio">Município:</label>
                                         <select class="form-control form-select" name="municipio" id="municipio" required>
@@ -82,7 +84,7 @@
                                         </select>
                                     </div>
                                 </div>
-                                <div class="col-md-8 col-sm-8 col-xs-12">
+                                <div class="col col-md-12 col-sm-12 col-xl-12">
                                     <div class="form-group mb-3" id="divOrgaos">
                                         <label for="orgaos">Órgãos de Classe:</label>
                                         <select class="form-control form-select" name="orgaos" id="orgaos">
@@ -94,29 +96,29 @@
                                     </div>
                                 </div>
 
-                                <div class="col-md-8 col-sm-8 col-xs-12" style="margin-bottom: 30px; padding: 0px;">
-                                    <div class="form-group">
-                                        <div class="col-md-12">
-                                            <label for="tipoCruzamento">Tipo de Cruzamento:</label>
-                                        </div>
-                                        <div class="col-md-10 col-sm-8 col-xs-6">
-                                            <select class="form-control form-select" name="tipoCruzamento" id="tipoCruzamento">
-                                                <option value="intersecao" {{ intersecao }}>Interseção</option>
-                                                <option value="diferenca" {{ diferenca }}>Diferença</option>
-                                            </select>
-                                        </div>
-                                        <div class="col-md-2 col-sm-2 col-xs-2">
-                                            <button type="button" id="info" class="btn" data-bs-toggle="popover"
-                                                data-bs-title="Tipo de Cruzamento" data-bs-content=" " onclick="exibirPopover(this)"
-                                                onblur="ocultarCampo(this)" style="padding: 5px;">
-                                                <i class="fa fa-exclamation-circle"></i>
-                                            </button>
-                                        </div>
-                                    </div>
+                                <div class="col-md-12 col-sm-12 col-xs-12">
+                                    <label for="tipoCruzamento">Tipo de Cruzamento:</label>
                                 </div>
-                                <div class="col-md-8 col-sm-8 col-xs-12">
-                                    <div class="d-flex justify-content-center" style="padding: 0px 40px 0px 40px;">
-                                        <div class="col-md-6 col-sm-6 col-xs-8" style="padding-left: 30px;">
+                                <div class="col-md-12 col-sm-12 col-xl-12 mb-3 form-group d-flex">
+                                    <div class="col col-md-10 col-sm-10 col-xl-10">
+                                         <select class="form-control form-select" name="tipoCruzamento" id="tipoCruzamento">
+                                            <option value="intersecao" {{ intersecao }}>Interseção</option>
+                                            <option value="diferenca" {{ diferenca }}>Diferença</option>
+                                         </select>
+
+                                    </div>
+                                   <div class="col-xs-2 col-md-2 col-sm-2 col-xl-2 d-flex justify-content-center p-2">
+                                        <button type="button" id="info" class="btn " data-bs-toggle="popover"
+                                            data-bs-title="Tipo de Cruzamento" data-bs-content=" " onclick="exibirPopover(this)"
+                                            onblur="ocultarCampo(this)" style="padding: 1px;">
+                                            <i class="fa fa-exclamation-circle"></i>
+                                        </button>
+                                   </div>
+
+                                </div>
+                                <div class="col-xs-12 col-md-12 col-sm-12 col-xl-12">
+                                    <div class="d-flex justify-content-center p-4">
+                                        <div class="col-xs-8 col-md-6 col-sm-6 col-xl-6">
                                             <!-- <div class="form-check form-switch m-2"> -->
                                             <input class="form-check-input " type="radio" id="todo_periodo" name="tipo_periodo"
                                                 value="todo_periodo" onclick="regraPeriodo(this)" {{ todo_periodo }}>
@@ -124,7 +126,7 @@
                                             <!-- </div> -->
                                         </div>
 
-                                        <div class="col-md-6 col-sm-6 col-xs-8" style="padding-left: 30px;">
+                                        <div class="col-xs-8 col-md-6 col-sm-6 col-xl-6" style="padding-left: 30px;">
                                             <!-- <div class="form-check form-switch m-2">  -->
                                             <input class="form-check-input" type="radio" id="informar_periodo" name="tipo_periodo"
                                                 value="informar_periodo" onclick="regraPeriodo(this)" {{ informar_periodo }}>
@@ -134,40 +136,44 @@
                                     </div>
 
                                 </div>
-                                <div class="col-md-8 col-sm-8 col-xs-12" style="margin-top: 30px;" id="divPeriodo">
-                                    <div class="d-flex -flex justify-content-lg-between">
-                                        <div class="col-md-6 col-sm-6 col-xs-8 form-group"  style="display: flex;">
-                                            <label for="de" class="col-xs-3">De:</label>
+
+                                <div class="col-12 col-md-12 col-sm-12 col-xl-12 mt-4 d-flex" id="divPeriodo">
+                                    <div class="col-6 col-md-6 me-1">
+                                        <label for="de">De:</label>
+                                        <div class=" form-group">
                                             <input type="month" class="form-control" id="de" name="de" value="{{ de }}" placeholder="De">
                                         </div>
-                                        <div class="col-md-6 col-sm-6 col-xs-8 form-group" style="display: flex;">
-                                            <label for="ate" class="col-xs-3">Até:</label>
+                                    </div>
+                                     <div class="col-6 col-md-6">
+                                         <label for="ate">Até:</label>
+                                        <div class="form-group">
                                             <input type="month" class="form-control" id="ate" name="ate" value="{{ ate }}" placeholder="Até">
                                         </div>
                                     </div>
+
                                 </div>
 
-                                <div class="col-md-8 col-sm-8 col-xs-12" style="margin-top: 30px;">
+                                <div class="col-xs-12 col-md-12 col-sm-12 col-xl-12 mt-4">
                                     <div class="form-group mb-3">
                                         <label for="nomeBeneficiario">Nome:</label>
                                         <input type="text" class="form-control" id="nomeBeneficiario" name="nomeBeneficiario"
                                             value="{{ nome }}" placeholder="Nome">
                                     </div>
                                 </div>
-                                <div class="col-md-8 col-sm-8 col-xs-12">
+                                <div class="col-md-12 col-sm-12 col-xl-12">
                                     <div class="form-group mb-3">
                                         <label for="nis">NIS:</label>
                                         <input type="text" class="form-control" id="nis" name="nis" value="{{ nis }}"
                                             placeholder="Número do NIS">
                                     </div>
                                 </div>
-                                <div class="col-md-8 col-sm-8 col-xs-12" style="display: flex; justify-content:  center; margin-top: 30px;">
+                                <div class="col-md-12 col-sm-12 col-xl-12 d-flex justify-content-center mt-5 mb-5">
                                     <button type="button" class="btn btn-primary" onclick="carregarDados()">Iniciar
                                         Cruzamento</button>
                                     <button type="submit" id="buscar" style="display: none;"> </button>
                                 </div>
                             </form>
-                        </div>
+<!--                        </div>-->
                     <!-- </div> -->
                 </div>
             </div>
@@ -203,5 +209,5 @@
         </div>
     </div>
 
-    <script src="{% static 'polls/cruzamento.js' %}"></script>
+<!--    <script src="{% static 'polls/cruzamento.js' %}"></script>-->
 {% endblock %}

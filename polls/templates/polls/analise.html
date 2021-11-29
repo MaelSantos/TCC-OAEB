@@ -28,35 +28,27 @@
     <!-- /container -->
 
 <div class="col col-md-3"></div>
-    <div class="max-100 max-vh-100 d-flex align-items-center">
+    <div class="max-100 max-vh-100 d-flex">
         <!-- container -->
         <div class="container">
-            <div class="row justify-content-center align-self-center">
-                <div class="col col-md-6 col-xl-5 my-auto">
+            <div class="row">
+                <div class="col col-md-8 col-sm-8 col-xl-8 my-auto">
                     <div class="p-5 border-shadow">
 
                         <form method="POST" class="form-signin" action="/polls/analise/">
                             {% csrf_token %}
 
-                            <div class="form-group mb-3">
-                                <div class="row">
-                                    <div class="col col-md-12 d-flex">
-                                        <div class="col-md-8">
-                                            <label for="tipoGrafico"  class="form-label">Tipo Gráfico:</label>
-                                            <select for="inputdefault" class="form-control" name="tipoGrafico" id="tipoGrafico" onchange="regraGraficos(this)" required>
-                                                <option value="valor" {{ valor }} >Mês vs Valor</option>
-                                                <option value="total" {{ total }} >Cidades vs Total</option>
-                                            </select>
-                                        </div>
+                            <div class=" form-group mb-3"  >
+                                <div class=" row col-md-12 col-sm-12 col-xl-12 d-flex me-2 ">
+                                    <div class="col-xs-12 col-md-6 col-sm-5 col-xl-5">
+                                        <label for="tipoGrafico"  class="form-label">Tipo Gráfico:</label>
+                                        <select for="inputdefault" class="form-control" name="tipoGrafico" id="tipoGrafico" onchange="regraGraficos(this)" required>
+                                            <option value="valor" {{ valor }} >Mês vs Valor</option>
+                                            <option value="total" {{ total }} >Cidades vs Total</option>
+                                        </select>
                                     </div>
-                                </div>
-                            </div>
-
-                            <div class="form-group mb-3" id="divMunicipio">
-                                <div class="row">
-                                    <div class="col col-md-12 d-flex">
-                                        <div class="col-md-8">
-                                            <label for="municipio" class="form-label">Município:</label>
+                                     <div class="col-xs-5 col-md-6 col-sm-5 col-xl-5" id="divMunicipio">
+                                    <label for="municipio" class="form-label">Município:</label>
 <!--                                            <select for="inputdefault" class="form-control" name="municipio" id="municipio" required>-->
 <!--                                                <option value="SANTA_CRUZ_DA_BAIXA_VERDE" {{ SANTA_CRUZ_DA_BAIXA_VERDE }}>Santa Cruz da Baixa Verde</option>-->
 <!--                                                <option value="SERRA_TALHADA" {{ SERRA_TALHADA }} >Serra Talhada</option>-->
@@ -66,29 +58,27 @@
 <!--                                                <option value="MIRANDIBA" {{ MIRANDIBA }} >Mirandiba</option>-->
 <!--                                                <option value="SAO_JOSE_DO_BELMONTE" {{ SAO_JOSE_DO_BELMONTE }} >São José do Belmonte</option>-->
 <!--                                            </select>-->
-                                            <input type="text" class="form-control" id="municipio" name="municipio"
-                                            value="{{ municipio }}" placeholder="Município">
-                                        </div>
-                                    </div>
+                                    <input type="text" class="form-control" id="municipio" name="municipio"
+                                    value="{{ municipio }}" placeholder="Município">
                                 </div>
+                                </div>
+
                             </div>
 
                             <div class="form-group mb-3" id="divPeriodo">
-                                <div class="row">
-                                    <div class="col col-md-12 d-flex justify-content-lg-between">
-                                        <div class="col-md-6">
+                                    <div class=" row col-md-12 col-sm-12 col-xl-12 d-flex me-2">
+                                        <div class="col-md-6 col-sm-5 col-xl-5">
                                             <label for="de" class="form-label">De:</label>
                                             <input for="inputdefault" type="month" class="form-control" id="de" name="de" value="{{ de }}" placeholder="De">
                                         </div>
-                                        <div class="col-md-6">
+                                        <div class="col-md-6 col-sm-5 col-xl-5">
                                             <label for="ate" class="form-label">Até:</label>
                                             <input for="inputdefault" type="month" class="form-control" id="ate" name="ate" value="{{ de }}" placeholder="Até">
                                         </div>
                                     </div>
-                                </div>
                             </div>
 
-                            <div style="display: flex; justify-content: center; margin-top: 30px;">
+                            <div class="col-md-12 col-sm-12 col-xl-10 d-flex justify-content-center mt-5">
                                 <button type="button" class="btn btn-primary" onclick="carregarDados()">Procurar</button>
                                 <button type="submit" id="buscar" style="display: none;"> </button>
                             </div>

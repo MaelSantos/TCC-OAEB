@@ -35,7 +35,7 @@ label {
 
 /* Header */
 #head {
-
+    background: #181015 url( ../images/mapa2.png) no-repeat center;
     backdrop-filter: brightness(50%) !important;
     background-size: cover;
     min-height: 400px;
@@ -47,10 +47,11 @@ label {
     /*filter: brightness(50%);*/
 }
     .container-image {
-        background: #181015 url( ../images/mapa.png) no-repeat center;
+
+        filter: brightness(50%);
         background-size: cover;
-        min-height: 400px;
-        max-width: 400px;
+        height: 100%;
+        width: 100%;
         position: relative;
         width: auto;
         height: auto;
@@ -632,7 +633,7 @@ width:100%;
 height: 100px;
 min-height: 100px;
 padding-top: 0px;
-background: #181015 url(../images/bg_header.jpg) 0px -232px no-repeat;
+background: #181015 url(../images/mapa2.jpg) 0px -232px no-repeat;
 background-size: cover;
 }
 /**
