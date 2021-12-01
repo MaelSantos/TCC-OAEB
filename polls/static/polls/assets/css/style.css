@@ -48,14 +48,14 @@ label {
     position: relative;
 }
     .container-image {
-        background: black url( ../images/mapa2.png) no-repeat center;
-        backdrop-filter: brightness(50%) !important;
-        filter: brightness(50%);
+        background: #060a1b url(../images/mapa.png) no-repeat right;
+        background-position: right center;
+        filter: brightness(70%);
         background-size: contain;
         min-height: 400px;
         position: absolute;
         left: 0;
-        right: 0;
+        right: 10px;
     }
 
     #head.secondary {
@@ -559,7 +559,6 @@ nav#filter {
 .da-slider {
     width: auto;
     height: auto;
-    max-height: initial;
     position: absolute;
     top: 0px;
     bottom: 0px;
@@ -567,14 +566,55 @@ nav#filter {
     left: 0px;
 }
 
-.da-slide h2 {
-    text-align: center;
-    top: 15%;
-}
 
 .da-slide p {
     text-align: center;
-    top: 40%;
+    font-size: 33px;
+    top: center;
+}
+
+@media only screen and (max-width: 959px) {
+   .da-slide p{
+        font-size: 23px;
+        text-align: center;
+        top: center;
+    }
+}
+
+/* Tablet Portrait size to standard 960 (devices and browsers) */
+@media only screen and (min-width: 768px) and (max-width: 959px) {
+   .da-slide p{
+        font-size: 23px;
+        text-align: center;
+        top: center;
+    }
+}
+
+/* All Mobile Sizes (devices and browser) */
+@media only screen and (max-width: 767px) {
+  .da-slide  p{
+        font-size: 23px;
+        text-align: center;
+        top: center;
+    }
+}
+
+/* Mobile Landscape Size to Tablet Portrait (devices and browsers) */
+@media only screen and (min-width: 480px) and (max-width: 767px) {
+   .da-slide p{
+        font-size: 23px;
+        text-align: center;
+        top: center;
+    }
+}
+
+/* Mobile Portrait Size to Mobile Landscape Size (devices and browsers) */
+@media only screen and (max-width: 479px) {
+  .da-slide  p{
+        font-size: 23px;
+        text-align: center;
+        top: center;
+    }
 }
 
 .da-arrows span {
@@ -631,11 +671,11 @@ width:100%;
     text-align: center;
 }
 #head.secondary {
-height: 100px;
-min-height: 100px;
-padding-top: 0px;
-background: #181015 url(../images/mapa2.jpg) 0px -232px no-repeat;
-background-size: cover;
+    background: #060a1b url(../images/mapa.png) right no-repeat;
+    height: 100px;
+    min-height: 100px;
+    padding-top: 0px;
+    background-size: contain;
 }
 /**
   MEDIA QUERIES
