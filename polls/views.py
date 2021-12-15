@@ -55,7 +55,7 @@ def contatos(request):
 
 
 def cruzamento(request):
-    return render(request, 'polls/cruzamento.html')
+    return render(request, 'polls/cruzamento.html', {"todo_periodo": "checked='checked'"})
 
 
 def cruzar(request):
@@ -93,12 +93,11 @@ def cruzar(request):
     else:
         data = tableA.to_html()
 
-    print(tipo_periodo)
-
+    data = data.replace("NaN", "Não há").replace("nan", "Não há")
     return render(request, 'polls/cruzamento.html',
-                  {'data': data, "nome": nome, "nis": nis, tipoCruzamento: "selected", municipio: "selected",
-                   orgaos: "selected", base1: "selected", base2 + "2": "selected", tipo_periodo: "checked", "de": de,
-                   "ate": ate})
+                  {'data': data, "nome": nome, "nis": nis,
+                   tipoCruzamento: "selected", municipio: "selected", orgaos: "selected", base1: "selected",
+                   base2 + "2": "selected", tipo_periodo: "checked='checked'", "de": de, "ate": ate})
 
 
 def gerar_pdf(request):

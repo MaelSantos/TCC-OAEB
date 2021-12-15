@@ -104,11 +104,12 @@ const criarCarregamento = setInterval(displayMsgCarregamento, 10*1000);
 $(document).ready(function(){
     $('[data-bs-toggle="popover"]').popover();
 
-    if($('input[name="tipo_periodo"]:checked') != undefined){
-        $("#todo_periodo").attr('checked', true);
-        $('#divPeriodo').hide();
-    } else
+    console.log($('#informar_periodo').is(':checked'))
+    if($('#informar_periodo').is(':checked')){
         $('#divPeriodo').show();
+    }else{
+        $('#divPeriodo').hide();
+    }
 
     if($("#base1 option:selected").text() == "Órgãos de Classe" || $("#base3 option:selected").text() == "Órgãos de Classe")
         $('#divOrgaos').show();

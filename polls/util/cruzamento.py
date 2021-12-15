@@ -94,6 +94,12 @@ class Cruzamento:
         return table
 
     def cruzar_ambas(self, tableA, tableB, chave, sufixos=['A', 'B']):
+
+        if 'NIS' in tableA.columns:
+            tableA['NIS'] = tableA['NIS'].astype(str)
+        if 'NIS' in tableB.columns:
+            tableB['NIS'] = tableB['NIS'].astype(str)
+
         ambos = pd.merge(tableA, tableB, how='inner', on=chave, suffixes=sufixos)  # contém em ambas as bases
         ambos = ambos.sort_values(chave)
         ambos = ambos.drop_duplicates(subset=chave, keep='first')
@@ -101,6 +107,12 @@ class Cruzamento:
 
     def cruzar_diferenca(self, tableA, tableB, chave, sufixos=['A', 'B']):
         # tableB = tableB.drop(columns=['UF', 'CPF'])
+
+        if 'NIS' in tableA.columns:
+            tableA['NIS'] = tableA['NIS'].astype(str)
+        if 'NIS' in tableB.columns:
+            tableB['NIS'] = tableB['NIS'].astype(str)
+
         diferenca = tableA.merge(tableB, how='outer', on=chave, suffixes=sufixos, indicator=True).loc[
             lambda x: x['_merge'] == 'left_only']
         # tableB = tableB.drop(columns=['Nome'])
