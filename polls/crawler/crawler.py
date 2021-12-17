@@ -34,8 +34,8 @@ class Crawler:
 
     def criar_crawler(self, ocultar_pagina=False):
         chrome_options = Options()
-        # if ocultar_pagina:
-        #     chrome_options.add_argument("--headless")  ## faz com que o browser não abra durante o processo
+        if ocultar_pagina:
+            chrome_options.add_argument("--headless")  ## faz com que o browser não abra durante o processo
 
         chrome_options.add_argument("start-maximized")
         chrome_options.add_argument("enable-automation")
