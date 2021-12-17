@@ -76,7 +76,7 @@ function carregarDados(){
     getResponse();
     $('#progresso').show();
     $(".dataframe").hide();
-    $("#salvar").hide();
+    $("#salvarpdf").hide();
     $("#buscar").click();
 }
 

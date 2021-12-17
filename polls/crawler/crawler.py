@@ -33,8 +33,18 @@ class Crawler:
 
     def criar_crawler(self, ocultar_pagina=False):
         chrome_options = Options()
-        if ocultar_pagina:
-            chrome_options.add_argument("--headless")  ## faz com que o browser não abra durante o processo
+        # if ocultar_pagina:
+        #     chrome_options.add_argument("--headless")  ## faz com que o browser não abra durante o processo
+
+        chrome_options.add_argument("start-maximized")
+        chrome_options.add_argument("enable-automation")
+        # chrome_options.add_argument("--headless")
+        chrome_options.add_argument("--no-sandbox")
+        chrome_options.add_argument("--disable-infobars")
+        chrome_options.add_argument("--disable-dev-shm-usage")
+        chrome_options.add_argument("--disable-browser-side-navigation")
+        chrome_options.add_argument("--disable-gpu")
+
         driver = webdriver.Chrome(executable_path='chromedriver',
                                   options=chrome_options)  ## caminho para o seu webdriver
         driver.implicitly_wait(3)
