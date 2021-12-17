@@ -5,7 +5,7 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import Select
-
+from webdriver_manager.chrome import ChromeDriverManager
 
 class Crawler:
     url_padrao = "folha-pagamentos/servidoresAtivos?"
@@ -45,7 +45,7 @@ class Crawler:
         chrome_options.add_argument("--disable-browser-side-navigation")
         chrome_options.add_argument("--disable-gpu")
 
-        driver = webdriver.Chrome(executable_path='chromedriver',
+        driver = webdriver.Chrome(ChromeDriverManager().install(),
                                   options=chrome_options)  ## caminho para o seu webdriver
         driver.implicitly_wait(3)
         return driver
