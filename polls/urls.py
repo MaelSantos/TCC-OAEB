@@ -12,5 +12,6 @@ urlpatterns = [
     path('contatos/', views.contatos, name='contatos'),
 
     path('cruzamento/salvar/pdf/', views.gerar_pdf, name='salvar_pdf'),
+    path('cruzamento/salvar/csv/', views.gerar_csv, name='salvar_csv'),
 
 ]

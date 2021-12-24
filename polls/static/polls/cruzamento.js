@@ -86,6 +86,12 @@ function salvarPdf(){
     $("#salvar").click();
 }
 
+function salvarCsv(){
+    html = $("#tabelaDados").html();
+    $("#htmlstringcsv").val(html);
+    $("#salvar2").click();
+}
+
 function getResponse() {
     $('#loadingModal_content').html('Carregando...');
     $('#loadingModal').modal('show');

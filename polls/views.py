@@ -116,6 +116,20 @@ def gerar_pdf(request):
     response['Content-Disposition'] = 'attachment; filename="export.pdf"'
     return response
 
+def gerar_csv(request):
+    htmlstring = request.POST.get('htmlstring')
+    htmlstring = '<!DOCTYPE html><html lang="pt-br"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" ' \
+                 'content="IE=edge"><meta name="viewport" content="width=device-width, ' \
+                 'initial-scale=1.0"> </head><body> ' + htmlstring + ' </body></html> '
+    dt_csv = pd.read_html(htmlstring)[0]
+
+    response = HttpResponse(
+        content_type='text/csv',
+        headers={'Content-Disposition': 'attachment; filename="export.csv"'},
+    )
+
+    dt_csv.to_csv(path_or_buf=response, encoding='utf-8-sig', sep=';')
+    return response
 
 def analise(request):
     if request.method == "POST":

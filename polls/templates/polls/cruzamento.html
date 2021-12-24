@@ -190,6 +190,13 @@
             <button type="submit" id="salvar" style="display: none;"> </button>
         </form>
 
+        <form method="POST" action="/polls/cruzamento/salvar/csv/" target="_blank">
+            {% csrf_token %}
+            <button type="button" id="salvarcsv" class="btn btn-primary" onclick="salvarCsv()">Salvar CSV</button>
+            <input type="text" id="htmlstringcsv" name="htmlstring" style="display: none;">
+            <button type="submit" id="salvar2" style="display: none;"> </button>
+        </form>
+
         <div class="d-flex justify-content-center justify-content-lg-between p-4 border-bottom" id="tabelaDados">
             {{ data | safe }}
         </div>
