@@ -2,9 +2,11 @@ import pdfkit
 import pandas as pd
 
 from django.http import HttpResponse
-from django.shortcuts import render, redirect
+from django.shortcuts import render
 
 from .crawler.crawler import Crawler
+from .dao.dao_backup import DaoBackup
+from .models import Backup
 from .util.cruzamento import Cruzamento
 from .util.graph import Graph
 
@@ -13,41 +15,6 @@ crawler = Crawler()
 
 def index(request):
     return render(request, 'polls/index.html')
-
-
-def busca(request):
-    return render(request, 'polls/busca_beneficiario.html')
-
-
-def buscar(request):
-    if request.method == "POST":
-        nome = request.POST.get('nomeBeneficiario')
-        nis = request.POST.get('nis')
-        tipoBusca = request.POST.get('tipoBusca')
-        cidade = request.POST.get('cidade')
-
-        de = request.POST.get('de')
-        ate = request.POST.get('ate')
-        periodo = request.POST.get('periodo')
-
-        if tipoBusca == "prefeitura":
-            bolsa = ""
-            prefeitura = "selected"
-            periodo_prefeitura = periodo.split('-')
-            mes = periodo_prefeitura[1]
-            ano = periodo_prefeitura[0]
-            html = crawler.crawler_prefeitura(cidade, nome, mes, ano)
-        elif tipoBusca == "bolsa":
-            prefeitura = ""
-            bolsa = "selected"
-            html = crawler.crawler_bolsafamilia(nome, nis, de, ate)
-
-        return render(request, 'polls/busca_beneficiario.html', {'data': html, "nome": nome, "nis": nis,
-                                                                 "prefeitura": prefeitura, "bolsa": bolsa,
-                                                                 cidade: "selected", "de": de, "ate": ate,
-                                                                 "periodo": periodo})
-    else:
-        return redirect('buscar')
 
 
 def contatos(request):
@@ -73,25 +40,49 @@ def cruzar(request):
         ate = "2020-12"
     base1 = request.POST.get('base1')
     base2 = request.POST.get('base2')
+    print(base2)
 
-    c = Cruzamento()
-    tableA = c.buscar_bases(base1, nome=nome, nis=nis, cidade=municipio, periodoDe=de, periodoAte=ate, orgaos=orgaos)
+    dao = DaoBackup()
+    backup = dao.buscar(base_principal=base1, base_secundaria=base2, municipio=municipio, orgao=orgaos,
+                        tipo_cruzamento=tipoCruzamento, periodo_de=de, periodo_ate=ate, nome=nome, nis=nis)
 
-    if base2 != "":
-        sufixos = ["_" + base1[0:2].upper(), "_" + base2[0:2].upper()]
-        if base1 == "auxilio" and base2 == "bolsa":
-            chave = "NIS"
+    print(backup)
+    if backup is None:
+
+        c = Cruzamento()
+        tableA = c.buscar_bases(base1, nome=nome, nis=nis, cidade=municipio, periodoDe=de, periodoAte=ate, orgaos=orgaos)
+
+        if base2 != "":
+            sufixos = ["_" + base1[0:2].upper(), "_" + base2[0:2].upper()]
+            if base1 == "auxilio" and base2 == "bolsa":
+                chave = "NIS"
+            else:
+                chave = "Nome"
+
+            tableB = c.buscar_bases(base2, nome=nome, nis=nis, cidade=municipio, periodoDe=de, periodoAte=ate,
+                                    orgaos=orgaos)
+            if tipoCruzamento == "intersecao":
+                data = c.cruzar_ambas(tableA, tableB, chave, sufixos)
+            else:
+                data = c.cruzar_diferenca(tableA, tableB, chave, sufixos)
         else:
-            chave = "Nome"
+            data = tableA.to_html()
 
-        tableB = c.buscar_bases(base2, nome=nome, nis=nis, cidade=municipio, periodoDe=de, periodoAte=ate,
-                                orgaos=orgaos)
-        if tipoCruzamento == "intersecao":
-            data = c.cruzar_ambas(tableA, tableB, chave, sufixos)
-        else:
-            data = c.cruzar_diferenca(tableA, tableB, chave, sufixos)
+        backup = Backup()
+        backup.base_principal = base1
+        backup.base_secundaria = base2
+        backup.municipio = municipio
+        backup.orgao = orgaos
+        backup.tipo_cruzamento = tipoCruzamento
+        backup.periodo_de = de
+        backup.periodo_ate = ate
+        backup.nome = nome
+        backup.nis = nis
+        backup.resultado = pd.read_html(data)[0].to_json()
+        dao.salvar(backup)
     else:
-        data = tableA.to_html()
+        print(backup.resultado)
+        data = pd.read_json(backup.resultado).to_html()
 
     data = data.replace("NaN", "Não há").replace("nan", "Não há")
     return render(request, 'polls/cruzamento.html',
@@ -116,6 +107,7 @@ def gerar_pdf(request):
     response['Content-Disposition'] = 'attachment; filename="export.pdf"'
     return response
 
+
 def gerar_csv(request):
     htmlstring = request.POST.get('htmlstring')
     htmlstring = '<!DOCTYPE html><html lang="pt-br"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" ' \
@@ -130,6 +122,7 @@ def gerar_csv(request):
 
     dt_csv.to_csv(path_or_buf=response, encoding='utf-8-sig', sep=';')
     return response
+
 
 def analise(request):
     if request.method == "POST":
@@ -177,15 +170,16 @@ def analise(request):
 
                 for cidade in ["Triunfo", "Calumbi", "Floresta", "Mirandiba", "Santa Cruz da Baixa Verde",
                                "Serra Talhada", "Sao Jose do Belmonte"]:
-
                     print(f"Cidade: {cidade} - Mês: {periodo}")
-                    total = c.buscar_auxilio_total(cidade=cidade.replace(" ", "_").upper(), periodoDe=periodo, periodoAte=periodo)
-                    tabela.append([cidade, total, periodo+"-01"])
+                    total = c.buscar_auxilio_total(cidade=cidade.replace(" ", "_").upper(), periodoDe=periodo,
+                                                   periodoAte=periodo)
+                    tabela.append([cidade, total, periodo + "-01"])
 
             tabelas = pd.DataFrame(tabela, columns=["Município", "Total", "Data"])
             print(tabelas)
             data = g.get_context_total(tabelas)
 
-        return render(request, "polls/analise.html", {'data': data, "municipio": municipio, tipoGrafico: "selected", "de": de, "ate": ate})
+        return render(request, "polls/analise.html",
+                      {'data': data, "municipio": municipio, tipoGrafico: "selected", "de": de, "ate": ate})
     else:
         return render(request, "polls/analise.html")
