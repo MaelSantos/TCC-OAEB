@@ -4,7 +4,9 @@ from sqlalchemy.ext.declarative import declarative_base
 
 # url = "mysql+pymysql://{username}:{password}@{server}/oaeb?charset=utf8".format(username='root', password='',
 #                                                                                 server='localhost')
-url = "mysql+pymysql://bc84b4f22d6208:e7ae88a3@us-cdbr-east-05.cleardb.net/heroku_3dc95edc67d0294?charset=utf8"
+# url = "mysql+pymysql://bc84b4f22d6208:e7ae88a3@us-cdbr-east-05.cleardb.net/heroku_3dc95edc67d0294?charset=utf8"
+
+url = "mysql+pymysql://kroqjy9qcxtwux34:hbp7tay1ksl0kjri@ckshdphy86qnz0bj.cbetxkdyhwsb.us-east-1.rds.amazonaws.com:3306/heze020iv1fe39gt?charset=utf8"
 
 engine = create_engine(url, echo=True)
 
