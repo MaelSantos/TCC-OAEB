@@ -75,10 +75,10 @@ WSGI_APPLICATION = 'Pcc_Auxilio.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'teste',
-        'USER': 'root',
-        'PASSWORD': '',
-        'HOST': 'localhost',  # Or an IP Address that your DB is hosted on
+        'NAME': 'heroku_3dc95edc67d0294',
+        'USER': 'bc84b4f22d6208',
+        'PASSWORD': 'e7ae88a3',
+        'HOST': 'us-cdbr-east-05.cleardb.net',  # Or an IP Address that your DB is hosted on
         'PORT': '3306',
     }
 }

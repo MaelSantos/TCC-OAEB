@@ -2,8 +2,10 @@ from sqlalchemy import create_engine, Column, Integer, String, Numeric, ForeignK
 from sqlalchemy.orm import sessionmaker, relationship
 from sqlalchemy.ext.declarative import declarative_base
 
-url = "mysql+pymysql://{username}:{password}@{server}/oaeb?charset=utf8".format(username='root', password='',
-                                                                                server='localhost')
+# url = "mysql+pymysql://{username}:{password}@{server}/oaeb?charset=utf8".format(username='root', password='',
+#                                                                                 server='localhost')
+url = "mysql://bc84b4f22d6208:e7ae88a3@us-cdbr-east-05.cleardb.net/heroku_3dc95edc67d0294?reconnect=true"
+
 engine = create_engine(url, echo=True)
 
 Session = sessionmaker(bind=engine)
