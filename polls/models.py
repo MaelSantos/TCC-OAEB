@@ -15,7 +15,6 @@ session = Session()
 
 Base = declarative_base()
 
-
 class Backup(Base):
     __tablename__ = 'backup'
 
