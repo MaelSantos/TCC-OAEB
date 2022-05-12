@@ -6,7 +6,7 @@ from django.shortcuts import render
 
 from .crawler.crawler import Crawler
 from .dao.dao_backup import DaoBackup
-from .models import Backup
+from .models import Backup, Grafico
 from .util.cruzamento import Cruzamento
 from .util.graph import Graph
 
@@ -43,7 +43,7 @@ def cruzar(request):
     print(base2)
 
     dao = DaoBackup()
-    backup = dao.buscar(base_principal=base1, base_secundaria=base2, municipio=municipio, orgao=orgaos,
+    backup = dao.buscar_backup(base_principal=base1, base_secundaria=base2, municipio=municipio, orgao=orgaos,
                         tipo_cruzamento=tipoCruzamento, periodo_de=de, periodo_ate=ate, nome=nome, nis=nis)
 
     print(backup)
@@ -143,41 +143,63 @@ def analise(request):
             periodo_ate = ate.replace("-", "")
 
         tabelas = None
-        if tipoGrafico == "valor":
-            for periodo in range(int(periodo_de), int(periodo_ate) + 1):
-                periodo = str(periodo)
-                periodo = periodo[0:4] + "-" + periodo[4::]
 
-                tabela = c.buscar_bases("auxilio", nome="", cidade=municipio, periodoDe=periodo, periodoAte=periodo)
-                tabela.insert(0, "Data", periodo)
+        dao = DaoBackup()
+        backup = dao.buscar_grafico(tipo=tipoGrafico, municipio=municipio, periodo_de=de, periodo_ate=ate)
+        if backup is None:
+            if tipoGrafico == "valor":
+                for periodo in range(int(periodo_de), int(periodo_ate) + 1):
+                    periodo = str(periodo)
+                    periodo = periodo[0:4] + "-" + periodo[4::]
 
-                if tabelas is not None:
-                    tabelas = pd.concat([tabelas, tabela])
-                else:
-                    tabelas = tabela
+                    tabela = c.buscar_bases("auxilio", nome="", cidade=municipio, periodoDe=periodo, periodoAte=periodo)
+                    tabela.insert(0, "Data", periodo)
 
-            tabelas['Valor Disponibilizado (R$)'] = tabelas['Valor Disponibilizado (R$)'].apply(g.format_valor)
-            tabelas = tabelas.groupby(['Valor Disponibilizado (R$)', 'Data'], as_index=False)['UF'].count()
-            tabelas = tabelas.rename(columns={'UF': 'Quantidade'})
+                    if tabelas is not None:
+                        tabelas = pd.concat([tabelas, tabela])
+                    else:
+                        tabelas = tabela
 
-            print(tabelas)
-            data = g.get_context_valor(tabelas)
+                tabelas['Valor Disponibilizado (R$)'] = tabelas['Valor Disponibilizado (R$)'].apply(g.format_valor)
+                tabelas = tabelas.groupby(['Valor Disponibilizado (R$)', 'Data'], as_index=False)['UF'].count()
+                tabelas = tabelas.rename(columns={'UF': 'Quantidade'})
+
+                print(tabelas)
+                data = g.get_context_valor(tabelas)
+            else:
+                tabela = []
+                for periodo in range(int(periodo_de), int(periodo_ate) + 1):
+                    periodo = str(periodo)
+                    periodo = periodo[0:4] + "-" + periodo[4::]
+
+                    for cidade in ["Triunfo", "Calumbi", "Floresta", "Mirandiba", "Santa Cruz da Baixa Verde",
+                                   "Serra Talhada", "Sao Jose do Belmonte"]:
+                        print(f"Cidade: {cidade} - Mês: {periodo}")
+                        total = c.buscar_auxilio_total(cidade=cidade.replace(" ", "_").upper(), periodoDe=periodo,
+                                                       periodoAte=periodo)
+                        tabela.append([cidade, total, periodo + "-01"])
+
+                tabelas = pd.DataFrame(tabela, columns=["Município", "Total", "Data"])
+                data = g.get_context_total(tabelas)
+                print(tabelas)
+
+            backup = Grafico()
+            backup.tipo = tipoGrafico
+            backup.municipio = municipio
+            backup.periodo_de = de
+            backup.periodo_ate = ate
+            backup.resultado = tabelas.to_json()
+
+            print(backup.resultado)
+            dao.salvar(backup)
+
         else:
-            tabela = []
-            for periodo in range(int(periodo_de), int(periodo_ate) + 1):
-                periodo = str(periodo)
-                periodo = periodo[0:4] + "-" + periodo[4::]
-
-                for cidade in ["Triunfo", "Calumbi", "Floresta", "Mirandiba", "Santa Cruz da Baixa Verde",
-                               "Serra Talhada", "Sao Jose do Belmonte"]:
-                    print(f"Cidade: {cidade} - Mês: {periodo}")
-                    total = c.buscar_auxilio_total(cidade=cidade.replace(" ", "_").upper(), periodoDe=periodo,
-                                                   periodoAte=periodo)
-                    tabela.append([cidade, total, periodo + "-01"])
-
-            tabelas = pd.DataFrame(tabela, columns=["Município", "Total", "Data"])
-            print(tabelas)
-            data = g.get_context_total(tabelas)
+            print(backup.resultado)
+            tabelas = pd.read_json(backup.resultado)
+            if tipoGrafico == "valor":
+                data = g.get_context_valor(tabelas)
+            else:
+                data = g.get_context_total(tabelas)
 
         return render(request, "polls/analise.html",
                       {'data': data, "municipio": municipio, tipoGrafico: "selected", "de": de, "ate": ate})

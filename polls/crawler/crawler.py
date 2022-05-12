@@ -6,7 +6,7 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import Select
 from webdriver_manager.chrome import ChromeDriverManager
-
+import chromedriver_binary
 
 class Crawler:
     url_padrao = "folha-pagamentos/servidoresAtivos?"

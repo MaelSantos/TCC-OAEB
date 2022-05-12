@@ -73,12 +73,21 @@ WSGI_APPLICATION = 'Pcc_Auxilio.wsgi.application'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
 DATABASES = {
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.mysql',
+    #     'NAME': 'heze020iv1fe39gt',
+    #     'USER': 'kroqjy9qcxtwux34',
+    #     'PASSWORD': 'hbp7tay1ksl0kjri',
+    #     'HOST': 'ckshdphy86qnz0bj.cbetxkdyhwsb.us-east-1.rds.amazonaws.com',  # Or an IP Address that your DB is hosted on
+    #     'PORT': '3306',
+    # }
+
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'heze020iv1fe39gt',
-        'USER': 'kroqjy9qcxtwux34',
-        'PASSWORD': 'hbp7tay1ksl0kjri',
-        'HOST': 'ckshdphy86qnz0bj.cbetxkdyhwsb.us-east-1.rds.amazonaws.com',  # Or an IP Address that your DB is hosted on
+        'NAME': 'oaeb',
+        'USER': 'root',
+        'PASSWORD': '',
+        'HOST': 'localhost',  # Or an IP Address that your DB is hosted on
         'PORT': '3306',
     }
 }
@@ -124,4 +133,4 @@ STATIC_URL = '/static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-django_on_heroku.settings(locals())
+# django_on_heroku.settings(locals())

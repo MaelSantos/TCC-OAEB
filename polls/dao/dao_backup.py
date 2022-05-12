@@ -1,6 +1,6 @@
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine
-from ..models import Backup
+from ..models import Backup, Grafico
 
 
 def tratar_vazios(valor):
@@ -11,10 +11,9 @@ def tratar_vazios(valor):
 
 
 class DaoBackup:
-    # url = "mysql+pymysql://{username}:{password}@{server}/oaeb?charset=utf8".format(username='root', password='',
-    #                                                                                 server='localhost')
+    url = "mysql+pymysql://{username}:{password}@{server}/oaeb?charset=utf8".format(username='root', password='', server='localhost')
 
-    url = "mysql+pymysql://kroqjy9qcxtwux34:hbp7tay1ksl0kjri@ckshdphy86qnz0bj.cbetxkdyhwsb.us-east-1.rds.amazonaws.com:3306/heze020iv1fe39gt?charset=utf8"
+    # url = "mysql+pymysql://kroqjy9qcxtwux34:hbp7tay1ksl0kjri@ckshdphy86qnz0bj.cbetxkdyhwsb.us-east-1.rds.amazonaws.com:3306/heze020iv1fe39gt?charset=utf8"
 
     engine = create_engine(url, echo=True)
     Session = sessionmaker(bind=engine)
@@ -30,7 +29,7 @@ class DaoBackup:
             self.session.rollback()
             raise Exception('Erro ao Salvar Backup - Contatar ADM')
 
-    def buscar(self, base_principal='', base_secundaria='', municipio='', orgao='',
+    def buscar_backup(self, base_principal='', base_secundaria='', municipio='', orgao='',
                tipo_cruzamento='', periodo_de='', periodo_ate='', nome='', nis=''):
         try:
             return self.session.query(Backup).filter(
@@ -43,6 +42,17 @@ class DaoBackup:
                 .filter(Backup.periodo_ate.like(tratar_vazios(periodo_ate))) \
                 .filter(Backup.nome.like(tratar_vazios(nome))) \
                 .filter(Backup.nis.like(tratar_vazios(nis))).first()
+        except Exception as e:
+            self.session.rollback()
+            raise Exception('Erro ao Buscar Backup - Contatar ADM')
+
+    def buscar_grafico(self, tipo='', municipio='', periodo_de='', periodo_ate=''):
+        try:
+            return self.session.query(Grafico)\
+                .filter(Grafico.municipio.like(tratar_vazios(municipio))) \
+                .filter(Grafico.tipo.like(tratar_vazios(tipo))) \
+                .filter(Grafico.periodo_de.like(tratar_vazios(periodo_de))) \
+                .filter(Grafico.periodo_ate.like(tratar_vazios(periodo_ate))).first()
         except Exception as e:
             self.session.rollback()
             raise Exception('Erro ao Buscar Backup - Contatar ADM')

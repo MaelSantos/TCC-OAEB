@@ -183,19 +183,25 @@
 
 {% block optional %}
     {% if data != None and data != "" %}
-        <form method="POST" action="/polls/cruzamento/salvar/pdf/" target="_blank">
-            {% csrf_token %}
-            <button type="button" id="salvarpdf" class="btn btn-primary" onclick="salvarPdf()">Salvar PDF</button>
-            <input type="text" id="htmlstring" name="htmlstring" style="display: none;">
-            <button type="submit" id="salvar" style="display: none;"> </button>
-        </form>
+        <div class="container row justify-content-start">
+            <div class="col-md-2">
+                <form method="POST" action="/polls/cruzamento/salvar/pdf/" target="_blank">
+                    {% csrf_token %}
+                    <button type="button" id="salvarpdf" class="btn btn-primary" onclick="salvarPdf()">Salvar PDF</button>
+                    <input type="text" id="htmlstring" name="htmlstring" style="display: none;">
+                    <button type="submit" id="salvar" style="display: none;"> </button>
+                </form>
+            </div>
 
-        <form method="POST" action="/polls/cruzamento/salvar/csv/" target="_blank">
-            {% csrf_token %}
-            <button type="button" id="salvarcsv" class="btn btn-primary" onclick="salvarCsv()">Salvar CSV</button>
-            <input type="text" id="htmlstringcsv" name="htmlstring" style="display: none;">
-            <button type="submit" id="salvar2" style="display: none;"> </button>
-        </form>
+            <div class="col-md-2">
+                <form method="POST" action="/polls/cruzamento/salvar/csv/" target="_blank">
+                    {% csrf_token %}
+                    <button type="button" id="salvarcsv" class="btn btn-primary" onclick="salvarCsv()">Salvar CSV</button>
+                    <input type="text" id="htmlstringcsv" name="htmlstring" style="display: none;">
+                    <button type="submit" id="salvar2" style="display: none;"> </button>
+                </form>
+            </div>
+        </div>
 
         <div class="d-flex justify-content-center justify-content-lg-between p-4 border-bottom" id="tabelaDados">
             {{ data | safe }}
