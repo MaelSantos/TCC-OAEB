@@ -16,7 +16,7 @@ class Graph:
         return fig.to_html()
 
     def format_valor(self, x):
-        if x == "Nenhum registro encontrado":
+        if x == "Nenhum registro encontrado" or not str(x).replace(".", "").isdecimal():
             return x
 
         if str(x).find(",") is not -1:

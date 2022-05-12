@@ -4,8 +4,8 @@ from ..models import Backup, Grafico
 
 
 def tratar_vazios(valor):
-    if valor is None:
-        return "%%"
+    if valor is None or valor is "":
+        return ""
     else:
         return '%' + valor + '%'
 
@@ -27,7 +27,7 @@ class DaoBackup:
             return backup.id
         except Exception as e:
             self.session.rollback()
-            raise Exception('Erro ao Salvar Backup - Contatar ADM')
+            raise Exception('Erro ao Salvar Backup - Contatar ADM {}'.format(e)) from None
 
     def buscar_backup(self, base_principal='', base_secundaria='', municipio='', orgao='',
                tipo_cruzamento='', periodo_de='', periodo_ate='', nome='', nis=''):
