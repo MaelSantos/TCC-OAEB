@@ -11,8 +11,11 @@ def tratar_vazios(valor):
 
 
 class DaoBackup:
-    url = "mysql+pymysql://{username}:{password}@{server}/oaeb?charset=utf8".format(username='root', password='',
-                                                                                    server='localhost')
+    # url = "mysql+pymysql://{username}:{password}@{server}/oaeb?charset=utf8".format(username='root', password='',
+    #                                                                                 server='localhost')
+
+    url = "mysql+pymysql://kroqjy9qcxtwux34:hbp7tay1ksl0kjri@ckshdphy86qnz0bj.cbetxkdyhwsb.us-east-1.rds.amazonaws.com:3306/heze020iv1fe39gt?charset=utf8"
+
     engine = create_engine(url, echo=True)
     Session = sessionmaker(bind=engine)
     session = Session()
